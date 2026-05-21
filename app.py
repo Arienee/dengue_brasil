@@ -8,7 +8,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 
 # ─── Configuração da página ───────────────────────────────────────────────
 st.set_page_config(
@@ -48,12 +48,12 @@ CORES = {
     "Norte": "#3182ce", "Nordeste": "#dd6b20",
     "Centro-Oeste": "#38a169", "Sudeste": "#e53e3e", "Sul": "#805ad5",
 }
-CORES_ALERTA = {"Baixo": "#38a169", "Médio": "#dd6b20", "Alto": "#e53e3e"}
+CORES_ALERTA = {"Baixo": "#38a169", "Medio": "#dd6b20", "Alto": "#e53e3e"}
 MESES = ["Jan","Fev","Mar","Abr","Mai","Jun",
          "Jul","Ago","Set","Out","Nov","Dez"]
 
 # ─── Carga dos dados ──────────────────────────────────────────────────────
-@st.cache_data(show_spinner="Carregando dados…")
+@st.cache_data(show_spinner="Carregando dados...")
 def carregar():
     base = os.path.dirname(__file__)
     df = pd.read_csv(os.path.join(base, "dados", "simulacao_dengue_brasil.csv"))
@@ -66,7 +66,7 @@ def carregar():
     df["nome_mes"]     = df["mes"].apply(lambda x: MESES[x - 1])
 
     def estacao(m):
-        if m in [12,1,2]:  return "Verão"
+        if m in [12,1,2]:  return "Verao"
         if m in [3,4,5]:   return "Outono"
         if m in [6,7,8]:   return "Inverno"
         return "Primavera"
@@ -74,42 +74,41 @@ def carregar():
     df["taxa_let"] = np.where(df["casos_dengue"] > 0,
                               df["obitos"] / df["casos_dengue"] * 100, 0).round(4)
 
-    # salva SQLite
-    db = os.path.join(base, "database", "dengue.sqlite")
-    create_engine(f"sqlite:///{db}").connect().close()
-    df.to_sql("dengue", create_engine(f"sqlite:///{db}"),
-              if_exists="replace", index=False)
+    # SQLite em memoria (funciona no Streamlit Cloud)
+    engine = create_engine("sqlite:///:memory:", echo=False)
+    df.to_sql("dengue", engine, if_exists="replace", index=False)
+
     return df
 
 df_full = carregar()
 
-# ─── Sidebar – filtros ────────────────────────────────────────────────────
+# ─── Sidebar filtros ──────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("## 🦟 Filtros")
+    st.markdown("## Filtros")
     st.markdown("---")
 
     anos = sorted(df_full["ano"].unique())
-    ano_sel = st.select_slider("Período", options=anos,
+    ano_sel = st.select_slider("Periodo", options=anos,
                                 value=(min(anos), max(anos)))
 
     regioes = sorted(df_full["regiao"].unique())
-    reg_sel = st.multiselect("Região", regioes, default=regioes)
+    reg_sel = st.multiselect("Regiao", regioes, default=regioes)
 
     ufs = sorted(df_full[df_full["regiao"].isin(reg_sel)]["uf"].unique())
     uf_sel = st.multiselect("Estado (UF)", ufs, default=ufs)
 
     muns = sorted(df_full[df_full["uf"].isin(uf_sel)]["municipio"].unique())
-    mun_sel = st.multiselect("Município", muns, default=muns)
+    mun_sel = st.multiselect("Municipio", muns, default=muns)
 
     alertas = sorted(df_full["nivel_alerta"].unique())
-    alert_sel = st.multiselect("Nível de Alerta", alertas, default=alertas)
+    alert_sel = st.multiselect("Nivel de Alerta", alertas, default=alertas)
 
     meses_num = list(range(1, 13))
     mes_sel = st.multiselect("Meses", meses_num, default=meses_num,
                               format_func=lambda x: MESES[x - 1])
 
     st.markdown("---")
-    st.caption("Projeto G2 · Dengue Brasil")
+    st.caption("Projeto G2 - Dengue Brasil")
 
 # ─── Aplicar filtros ──────────────────────────────────────────────────────
 df = df_full[
@@ -125,19 +124,19 @@ if df.empty:
     st.warning("Nenhum dado para os filtros selecionados. Ajuste os filtros.")
     st.stop()
 
-# ─── Cabeçalho ────────────────────────────────────────────────────────────
+# ─── Cabecalho ────────────────────────────────────────────────────────────
 st.markdown("""
 <h1 style='text-align:center;color:#e94560;font-size:2rem;margin-bottom:2px'>
-  🦟 Evolução dos Casos de Dengue no Brasil
+  Evolucao dos Casos de Dengue no Brasil
 </h1>
 <p style='text-align:center;color:#718096;margin-top:0'>
-  Análise epidemiológica · 2015–2024 · Projeto G2
+  Analise epidemiologica - 2015 a 2024 - Projeto G2
 </p>
 <hr style='border-color:#2d3748;margin:10px 0 20px'>
 """, unsafe_allow_html=True)
 
 # ─── KPIs ─────────────────────────────────────────────────────────────────
-st.markdown('<div class="sec">📊 Indicadores Principais</div>',
+st.markdown('<div class="sec">Indicadores Principais</div>',
             unsafe_allow_html=True)
 
 total_casos  = df["casos_dengue"].sum()
@@ -160,17 +159,17 @@ def kpi(col, label, val, sub=""):
 
 c1,c2,c3,c4 = st.columns(4)
 c5,c6,c7,c8 = st.columns(4)
-kpi(c1, "🦟 Total de Casos",       f"{total_casos:,.0f}")
-kpi(c2, "💀 Total de Óbitos",      f"{total_ob:,.0f}")
-kpi(c3, "🏥 Total de Internações", f"{total_int:,.0f}")
-kpi(c4, "📅 Média Mensal",         f"{media_men:,.0f}", "casos/mês")
-kpi(c5, "📈 Incidência Média",     f"{inc_media:.1f}",  "por 100k hab.")
-kpi(c6, "🗺️ Estado Mais Afetado",  uf_top)
-kpi(c7, "📍 Município Crítico",    mun_top, f"{mun_inc:.1f}/100k")
-kpi(c8, "🔥 Ano de Pico",         str(ano_pico), f"{ano_pico_v:,.0f} casos")
+kpi(c1, "Total de Casos",       f"{total_casos:,.0f}")
+kpi(c2, "Total de Obitos",      f"{total_ob:,.0f}")
+kpi(c3, "Total de Internacoes", f"{total_int:,.0f}")
+kpi(c4, "Media Mensal",         f"{media_men:,.0f}", "casos/mes")
+kpi(c5, "Incidencia Media",     f"{inc_media:.1f}",  "por 100k hab.")
+kpi(c6, "Estado Mais Afetado",  uf_top)
+kpi(c7, "Municipio Critico",    mun_top, f"{mun_inc:.1f}/100k")
+kpi(c8, "Ano de Pico",          str(ano_pico), f"{ano_pico_v:,.0f} casos")
 
-# ─── Evolução temporal ────────────────────────────────────────────────────
-st.markdown('<div class="sec">📈 Evolução Temporal</div>',
+# ─── Evolucao temporal ────────────────────────────────────────────────────
+st.markdown('<div class="sec">Evolucao Temporal</div>',
             unsafe_allow_html=True)
 
 por_ano = df.groupby("ano").agg(
@@ -187,11 +186,11 @@ with col_a:
                          name="Casos", marker_color="#e53e3e", opacity=.75),
                   secondary_y=False)
     fig.add_trace(go.Scatter(x=por_ano["ano"], y=por_ano["incidencia"],
-                             name="Incidência/100k", mode="lines+markers",
+                             name="Incidencia/100k", mode="lines+markers",
                              line=dict(color="#f6e05e", width=2.5),
                              marker=dict(size=7)),
                   secondary_y=True)
-    fig.update_layout(title="Casos e Incidência por Ano",
+    fig.update_layout(title="Casos e Incidencia por Ano",
                       hovermode="x unified",
                       plot_bgcolor="rgba(0,0,0,0)",
                       paper_bgcolor="rgba(0,0,0,0)",
@@ -202,7 +201,7 @@ with col_a:
 
 with col_b:
     fig2 = px.bar(por_ano, x="ano", y=["obitos","internacoes"],
-                  barmode="group", title="Óbitos e Internações por Ano",
+                  barmode="group", title="Obitos e Internacoes por Ano",
                   color_discrete_map={"obitos":"#fc8181","internacoes":"#f6ad55"},
                   labels={"value":"Qtd","ano":"Ano","variable":""})
     fig2.update_layout(hovermode="x unified",
@@ -214,16 +213,16 @@ with col_b:
 
 cresc = por_ano["casos"].pct_change().mean() * 100
 st.markdown(
-    f'<div class="info-box">📌 Ano de pico: <b>{ano_pico}</b> com '
-    f'<b>{ano_pico_v:,.0f} casos</b>. Crescimento médio anual: '
-    f'<b>{cresc:+.1f}%</b> no período selecionado.</div>',
+    f'<div class="info-box">Ano de pico: <b>{ano_pico}</b> com '
+    f'<b>{ano_pico_v:,.0f} casos</b>. Crescimento medio anual: '
+    f'<b>{cresc:+.1f}%</b> no periodo selecionado.</div>',
     unsafe_allow_html=True)
 
-# ─── Comparação regional ──────────────────────────────────────────────────
-st.markdown('<div class="sec">🗺️ Comparação Regional</div>',
+# ─── Comparacao regional ──────────────────────────────────────────────────
+st.markdown('<div class="sec">Comparacao Regional</div>',
             unsafe_allow_html=True)
 
-tab1, tab2 = st.tabs(["Por Região", "Por Estado (UF)"])
+tab1, tab2 = st.tabs(["Por Regiao", "Por Estado (UF)"])
 
 with tab1:
     por_reg = (df.groupby("regiao")
@@ -236,8 +235,8 @@ with tab1:
     with ca:
         fig = px.bar(por_reg, x="regiao", y="casos", color="regiao",
                      color_discrete_map=CORES, text_auto=".3s",
-                     title="Total de Casos por Região",
-                     labels={"casos":"Casos","regiao":"Região"})
+                     title="Total de Casos por Regiao",
+                     labels={"casos":"Casos","regiao":"Regiao"})
         fig.update_layout(showlegend=False,
                           plot_bgcolor="rgba(0,0,0,0)",
                           paper_bgcolor="rgba(0,0,0,0)",
@@ -246,7 +245,7 @@ with tab1:
     with cb:
         fig = px.pie(por_reg, names="regiao", values="casos",
                      color="regiao", color_discrete_map=CORES,
-                     hole=.4, title="Distribuição % por Região")
+                     hole=.4, title="Distribuicao % por Regiao")
         fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",
                           paper_bgcolor="rgba(0,0,0,0)",
                           font_color="#f7fafc")
@@ -255,8 +254,8 @@ with tab1:
     por_reg_ano = df.groupby(["ano","regiao"])["casos_dengue"].sum().reset_index()
     fig = px.line(por_reg_ano, x="ano", y="casos_dengue", color="regiao",
                   markers=True, color_discrete_map=CORES,
-                  title="Evolução por Região ao Longo do Tempo",
-                  labels={"casos_dengue":"Casos","ano":"Ano","regiao":"Região"})
+                  title="Evolucao por Regiao ao Longo do Tempo",
+                  labels={"casos_dengue":"Casos","ano":"Ano","regiao":"Regiao"})
     fig.update_layout(hovermode="x unified",
                       plot_bgcolor="rgba(0,0,0,0)",
                       paper_bgcolor="rgba(0,0,0,0)",
@@ -272,14 +271,14 @@ with tab2:
     fig = px.bar(por_uf, x="uf", y="casos", color="regiao",
                  color_discrete_map=CORES, text_auto=".3s",
                  title="Total de Casos por Estado (UF)",
-                 labels={"casos":"Casos","uf":"UF","regiao":"Região"})
+                 labels={"casos":"Casos","uf":"UF","regiao":"Regiao"})
     fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",
                       paper_bgcolor="rgba(0,0,0,0)",
                       font_color="#f7fafc")
     st.plotly_chart(fig, use_container_width=True)
 
 # ─── Sazonalidade ─────────────────────────────────────────────────────────
-st.markdown('<div class="sec">📅 Sazonalidade</div>',
+st.markdown('<div class="sec">Sazonalidade</div>',
             unsafe_allow_html=True)
 
 pivot = (df.groupby(["ano","mes"])["casos_dengue"]
@@ -288,8 +287,8 @@ pivot.columns = [MESES[c-1] for c in pivot.columns]
 
 fig = px.imshow(pivot, color_continuous_scale="YlOrRd",
                 text_auto=".3s",
-                title="Heatmap — Casos por Mês e Ano",
-                labels=dict(x="Mês", y="Ano", color="Casos"),
+                title="Heatmap - Casos por Mes e Ano",
+                labels=dict(x="Mes", y="Ano", color="Casos"),
                 aspect="auto")
 fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",
                   paper_bgcolor="rgba(0,0,0,0)",
@@ -302,8 +301,8 @@ mes_pico = sazon.loc[sazon["casos_dengue"].idxmax(), "nome_mes"]
 
 fig2 = px.bar(sazon, x="nome_mes", y="casos_dengue",
               color="casos_dengue", color_continuous_scale="YlOrRd",
-              title="Média Histórica Mensal de Casos",
-              labels={"casos_dengue":"Média de Casos","nome_mes":"Mês"},
+              title="Media Historica Mensal de Casos",
+              labels={"casos_dengue":"Media de Casos","nome_mes":"Mes"},
               category_orders={"nome_mes": MESES})
 fig2.update_layout(coloraxis_showscale=False,
                    plot_bgcolor="rgba(0,0,0,0)",
@@ -312,13 +311,13 @@ fig2.update_layout(coloraxis_showscale=False,
 st.plotly_chart(fig2, use_container_width=True)
 
 st.markdown(
-    f'<div class="alert-box">🔥 Mês historicamente mais crítico: '
-    f'<b>{mes_pico}</b>. Os primeiros meses do ano (jan–abr) concentram '
-    f'maior carga de casos — período de verão e chuvas intensas.</div>',
+    f'<div class="alert-box">Mes historicamente mais critico: '
+    f'<b>{mes_pico}</b>. Os primeiros meses do ano (jan-abr) concentram '
+    f'maior carga de casos - periodo de verao e chuvas intensas.</div>',
     unsafe_allow_html=True)
 
-# ─── Chuva × Dengue ───────────────────────────────────────────────────────
-st.markdown('<div class="sec">🌧️ Correlação: Chuva × Dengue</div>',
+# ─── Chuva x Dengue ───────────────────────────────────────────────────────
+st.markdown('<div class="sec">Correlacao: Chuva x Dengue</div>',
             unsafe_allow_html=True)
 
 col_c, col_d = st.columns(2)
@@ -327,9 +326,9 @@ with col_c:
     fig = px.scatter(df, x="chuva_mm", y="casos_dengue", color="regiao",
                      trendline="ols", opacity=.5,
                      color_discrete_map=CORES,
-                     title="Dispersão: Chuva × Casos",
+                     title="Dispersao: Chuva x Casos",
                      labels={"chuva_mm":"Chuva (mm)",
-                             "casos_dengue":"Casos","regiao":"Região"})
+                             "casos_dengue":"Casos","regiao":"Regiao"})
     fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",
                       paper_bgcolor="rgba(0,0,0,0)",
                       font_color="#f7fafc")
@@ -346,10 +345,10 @@ with col_d:
                           name="Chuva (mm)", marker_color="#4299e1", opacity=.7),
                    secondary_y=False)
     fig2.add_trace(go.Scatter(x=med["nome_mes"], y=med["casos"],
-                              name="Casos médios", mode="lines+markers",
+                              name="Casos medios", mode="lines+markers",
                               line=dict(color="#fc8181", width=2.5)),
                    secondary_y=True)
-    fig2.update_layout(title="Chuva e Casos — Médias Mensais",
+    fig2.update_layout(title="Chuva e Casos - Medias Mensais",
                        hovermode="x unified",
                        plot_bgcolor="rgba(0,0,0,0)",
                        paper_bgcolor="rgba(0,0,0,0)",
@@ -363,12 +362,12 @@ with col_d:
 r = df[["chuva_mm","casos_dengue"]].corr().iloc[0,1]
 forca = "forte" if abs(r) > .6 else "moderada" if abs(r) > .3 else "fraca"
 st.markdown(
-    f'<div class="info-box">📊 Correlação de Pearson: <b>r = {r:.3f}</b> — '
-    f'correlação <b>{forca}</b> entre chuva e casos de dengue.</div>',
+    f'<div class="info-box">Correlacao de Pearson: <b>r = {r:.3f}</b> - '
+    f'correlacao <b>{forca}</b> entre chuva e casos de dengue.</div>',
     unsafe_allow_html=True)
 
-# ─── Ranking de municípios ────────────────────────────────────────────────
-st.markdown('<div class="sec">📍 Ranking de Municípios</div>',
+# ─── Ranking de municipios ────────────────────────────────────────────────
+st.markdown('<div class="sec">Ranking de Municipios</div>',
             unsafe_allow_html=True)
 
 rank = (df.groupby(["municipio","uf","regiao"])
@@ -383,16 +382,16 @@ rank["label"] = rank["municipio"] + " / " + rank["uf"]
 fig = px.bar(rank, x="incidencia", y="label", orientation="h",
              color="regiao", color_discrete_map=CORES,
              text_auto=".1f",
-             title="Top 15 Municípios — Incidência Média por 100k hab.",
-             labels={"incidencia":"Incidência/100k","label":"Município","regiao":"Região"})
+             title="Top 15 Municipios - Incidencia Media por 100k hab.",
+             labels={"incidencia":"Incidencia/100k","label":"Municipio","regiao":"Regiao"})
 fig.update_layout(yaxis=dict(autorange="reversed"),
                   plot_bgcolor="rgba(0,0,0,0)",
                   paper_bgcolor="rgba(0,0,0,0)",
                   font_color="#f7fafc")
 st.plotly_chart(fig, use_container_width=True)
 
-# ─── Nível de alerta ──────────────────────────────────────────────────────
-st.markdown('<div class="sec">🚨 Nível de Alerta Epidemiológico</div>',
+# ─── Nivel de alerta ──────────────────────────────────────────────────────
+st.markdown('<div class="sec">Nivel de Alerta Epidemiologico</div>',
             unsafe_allow_html=True)
 
 ce, cf = st.columns(2)
@@ -400,7 +399,7 @@ with ce:
     al = df.groupby("nivel_alerta")["casos_dengue"].sum().reset_index()
     fig = px.pie(al, names="nivel_alerta", values="casos_dengue",
                  color="nivel_alerta", color_discrete_map=CORES_ALERTA,
-                 hole=.4, title="Casos por Nível de Alerta")
+                 hole=.4, title="Casos por Nivel de Alerta")
     fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",
                       paper_bgcolor="rgba(0,0,0,0)",
                       font_color="#f7fafc")
@@ -410,16 +409,16 @@ with cf:
     al2 = df.groupby(["regiao","nivel_alerta"])["casos_dengue"].sum().reset_index()
     fig2 = px.bar(al2, x="regiao", y="casos_dengue", color="nivel_alerta",
                   barmode="stack", color_discrete_map=CORES_ALERTA,
-                  title="Alerta por Região",
-                  labels={"casos_dengue":"Casos","regiao":"Região",
+                  title="Alerta por Regiao",
+                  labels={"casos_dengue":"Casos","regiao":"Regiao",
                           "nivel_alerta":"Alerta"})
     fig2.update_layout(plot_bgcolor="rgba(0,0,0,0)",
                        paper_bgcolor="rgba(0,0,0,0)",
                        font_color="#f7fafc")
     st.plotly_chart(fig2, use_container_width=True)
 
-# ─── Tabela dinâmica ──────────────────────────────────────────────────────
-st.markdown('<div class="sec">📋 Tabela Dinâmica</div>',
+# ─── Tabela dinamica ──────────────────────────────────────────────────────
+st.markdown('<div class="sec">Tabela Dinamica</div>',
             unsafe_allow_html=True)
 
 c1t, c2t = st.columns(2)
@@ -437,10 +436,10 @@ try:
                  .background_gradient(cmap="Reds", axis=None),
                  use_container_width=True)
 except Exception as e:
-    st.warning(f"Não foi possível gerar: {e}")
+    st.warning(f"Nao foi possivel gerar: {e}")
 
-# ─── Conclusão executiva ──────────────────────────────────────────────────
-st.markdown('<div class="sec">🎯 Conclusão Executiva</div>',
+# ─── Conclusao executiva ──────────────────────────────────────────────────
+st.markdown('<div class="sec">Conclusao Executiva</div>',
             unsafe_allow_html=True)
 
 reg_lider = df.groupby("regiao")["casos_dengue"].sum().idxmax()
@@ -449,34 +448,34 @@ st.markdown(f"""
 <div style="background:#1a1a2e;border-radius:10px;padding:22px 26px;
             line-height:1.85;color:#e2e8f0">
 
-<h4 style="color:#e94560;margin-top:0">📌 Principais Achados</h4>
+<h4 style="color:#e94560;margin-top:0">Principais Achados</h4>
 
-<b>Evolução:</b> {total_casos:,.0f} casos registrados no período.
-Crescimento médio anual de <b>{cresc:+.1f}%</b>.
+<b>Evolucao:</b> {total_casos:,.0f} casos registrados no periodo.
+Crescimento medio anual de <b>{cresc:+.1f}%</b>.
 Pico em <b>{ano_pico}</b> ({ano_pico_v:,.0f} casos).<br><br>
 
-<b>Sazonalidade:</b> Meses críticos entre <b>janeiro e abril</b> (verão/outono),
-coincidindo com chuvas intensas — condições ideais para o <i>Aedes aegypti</i>.
-Mês mais crítico: <b>{mes_pico}</b>.<br><br>
+<b>Sazonalidade:</b> Meses criticos entre <b>janeiro e abril</b> (verao/outono),
+coincidindo com chuvas intensas.
+Mes mais critico: <b>{mes_pico}</b>.<br><br>
 
-<b>Regional:</b> Região <b>{reg_lider}</b> concentrou mais casos.
+<b>Regional:</b> Regiao <b>{reg_lider}</b> concentrou mais casos.
 Estado mais afetado: <b>{uf_top}</b>.<br><br>
 
-<b>Chuva:</b> Correlação r = {r:.3f} ({forca}).
-Alertas climáticos podem antecipar surtos em 2–4 semanas.<br><br>
+<b>Chuva:</b> Correlacao r = {r:.3f} ({forca}).
+Alertas climaticos podem antecipar surtos em 2-4 semanas.<br><br>
 
-<b>Município crítico:</b> <b>{mun_top}</b> —
+<b>Municipio critico:</b> <b>{mun_top}</b> -
 {mun_inc:.1f} casos por 100 mil habitantes.<br><br>
 
-<h4 style="color:#68d391;margin-bottom:6px">✅ Recomendações</h4>
+<h4 style="color:#68d391;margin-bottom:6px">Recomendacoes</h4>
 <ul>
-  <li>Campanhas de eliminação de focos em <b>outubro–dezembro</b></li>
-  <li>Reforço hospitalar em <b>janeiro–abril</b></li>
-  <li>Vigilância intensiva nos municípios críticos</li>
-  <li>Alertas climáticos integrados com previsão de chuvas</li>
+  <li>Campanhas de eliminacao de focos em <b>outubro-dezembro</b></li>
+  <li>Reforco hospitalar em <b>janeiro-abril</b></li>
+  <li>Vigilancia intensiva nos municipios criticos</li>
+  <li>Alertas climaticos integrados com previsao de chuvas</li>
 </ul>
 </div>
 """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
-st.caption("🦟 Projeto G2 · Dengue Brasil · Dados simulados para fins didáticos")
+st.caption("Projeto G2 - Dengue Brasil - Dados simulados para fins didaticos")
