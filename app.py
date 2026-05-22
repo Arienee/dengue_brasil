@@ -13,12 +13,7 @@ from sqlalchemy import create_engine
 # ─── Configuração da página ───────────────────────────────────────────────
 st.set_page_config(
     st.markdown("""
-<div style='text-align:center;margin-bottom:10px'>
-  <img src='https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExc3VhcW13Mm1sYzd6MTJvZWJ5NTA0N3V2enRkMmM1NnA4aW9jbjllbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QKpJKPj8G5JzfQqhPl/giphy.gif' width='120'>
-</div>
-<h1 style='text-align:center;color:#e94560;font-size:2rem;margin-bottom:2px'>
-  Evolucao dos Casos de Dengue no Brasil
-</h1>
+
     page_title="Dengue no Brasil",
     layout="wide",
      page_icon="🦟",
