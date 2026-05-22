@@ -132,6 +132,9 @@ st.markdown("""
 <p style='text-align:center;color:#718096;margin-top:0'>
   Analise epidemiologica - 2015 a 2024 - Projeto G2
 </p>
+<p style='text-align:center;color:#a0aec0;font-size:0.85rem;margin-top:4px'>
+  Desenvolvido por Ariene Viana Marins e Joao Marcelo Lopes
+</p>
 <hr style='border-color:#2d3748;margin:10px 0 20px'>
 """, unsafe_allow_html=True)
 
@@ -478,4 +481,4 @@ Alertas climaticos podem antecipar surtos em 2-4 semanas.<br><br>
 """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
-st.caption("Projeto G2 - Dengue Brasil - Dados simulados para fins didaticos")
+st.caption("Projeto G2 - Dengue Brasil ")
