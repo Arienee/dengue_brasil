@@ -12,11 +12,9 @@ from sqlalchemy import create_engine
 
 # ─── Configuração da página ───────────────────────────────────────────────
 st.set_page_config(
-    st.markdown("""
-
     page_title="Dengue no Brasil",
+    page_icon="🦟",
     layout="wide",
-     page_icon="🦟",
     initial_sidebar_state="expanded",
 )
 
