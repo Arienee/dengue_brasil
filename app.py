@@ -481,7 +481,7 @@ except Exception as e:
     st.warning(f"Nao foi possivel gerar: {e}")
 
 # ── Conclusao ─────────────────────────────────────────────────────────────
-st.markdown('<div class="sec">Conclusao — Perguntas Respondidas</div>', unsafe_allow_html=True)
+st.markdown('<div class="sec">Conclusão — Perguntas Respondidas</div>', unsafe_allow_html=True)
 
 st.markdown(f"""
 <div style="background:#1a1a2e;border-radius:10px;padding:22px 26px;
@@ -525,7 +525,7 @@ st.markdown(f"""
 </table>
 
 <br>
-<h4 style="color:#68d391;margin-bottom:6px">Recomendacoes</h4>
+<h4 style="color:#68d391;margin-bottom:6px">Recomendações</h4>
 <ul>
   <li>Campanhas de eliminação de focos em <b>outubro-dezembro</b></li>
   <li>Reforço hospitalar em <b>janeiro-abril</b></li>
