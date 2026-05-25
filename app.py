@@ -113,13 +113,13 @@ if df.empty:
 st.markdown("""
 <div style='text-align:center;font-size:3.5rem;margin-bottom:0'>🦟</div>
 <h1 style='text-align:center;color:#e94560;font-size:2rem;margin-bottom:2px'>
-  Evolucao dos Casos de Dengue no Brasil
+  Evolução dos Casos de Dengue no Brasil
 </h1>
 <p style='text-align:center;color:#718096;margin-top:0'>
-  Analise epidemiologica - 2015 a 2024 - Projeto G2
+  Analise epidemiológica - 2015 a 2024 - Projeto G2
 </p>
 <p style='text-align:center;color:#a0aec0;font-size:0.85rem;margin-top:4px'>
-  Desenvolvido por Ariene Viana Marins e Joao Marcelo Lopes
+  Desenvolvido por Ariene Viana Marins e João Marcelo Lopes Alves
 </p>
 <hr style='border-color:#2d3748;margin:10px 0 20px'>
 """, unsafe_allow_html=True)
@@ -127,17 +127,17 @@ st.markdown("""
 # ── Introducao ────────────────────────────────────────────────────────────
 with st.expander("Sobre este projeto", expanded=False):
     st.markdown("""
-    A dengue e uma das doencas que mais preocupam o Brasil em termos de saude publica.
+    A dengue é uma das doenças que mais preocupam o Brasil em termos de saúde pública.
     Transmitida pelo mosquito *Aedes aegypti*, ela afeta milhares de pessoas todos os anos,
-    especialmente nos periodos de verao, quando as chuvas criam condicoes ideais para a
-    reproducao do mosquito.
+    especialmente nos períodos de verão, quando as chuvas criam condições ideais para a
+    reprodução do mosquito.
 
     **Perguntas que este dashboard responde:**
     - Quais estados tem mais casos de dengue?
     - Em quais meses do ano os casos aumentam mais?
     - Os casos cresceram ao longo dos anos?
-    - Existe relacao entre chuva e aumento de casos?
-    - Quais municipios sao mais afetados?
+    - Existe relação entre chuva e aumento de casos?
+    - Quais municípios são mais afetados?
     """)
 
 # ── KPIs ──────────────────────────────────────────────────────────────────
@@ -167,19 +167,19 @@ kpi(c1, "Total de Casos",       f"{total_casos:,.0f}")
 kpi(c2, "Total de Obitos",      f"{total_ob:,.0f}")
 kpi(c3, "Total de Internacoes", f"{total_int:,.0f}")
 kpi(c4, "Media Mensal",         f"{media_men:,.0f}", "casos/mes")
-kpi(c5, "Incidencia Media",     f"{inc_media:.1f}",  "por 100k hab.")
+kpi(c5, "Incidência Média",     f"{inc_media:.1f}",  "por 100k hab.")
 kpi(c6, "Estado Mais Afetado",  uf_top)
-kpi(c7, "Municipio Critico",    mun_top, f"{mun_inc:.1f}/100k")
+kpi(c7, "Município Crítico",    mun_top, f"{mun_inc:.1f}/100k")
 kpi(c8, "Ano de Pico",          str(ano_pico), f"{ano_pico_v:,.0f} casos")
 
 # ── Evolucao Temporal ─────────────────────────────────────────────────────
-st.markdown('<div class="sec">Evolucao Temporal dos Casos</div>', unsafe_allow_html=True)
+st.markdown('<div class="sec">Evolução Temporal dos Casos</div>', unsafe_allow_html=True)
 st.markdown("""
 <div class="analise-box">
-Escolhemos o grafico de linha porque ele e o melhor para mostrar como uma coisa muda ao longo
-do tempo. Da pra ver claramente em quais anos a situacao piorou ou melhorou. A area sombreada
-embaixo da linha ajuda a ter uma nocao do volume total. As barras do lado mostram obitos e
-internacoes para complementar a analise.
+Escolhemos o gráfico de linha porque ele é o melhor para mostrar como uma coisa muda ao longo
+do tempo. Da pra ver claramente em quais anos a situação piorou ou melhorou. A área sombreada
+embaixo da linha ajuda a ter uma noção do volume total. As barras do lado mostram óbitos e
+internações para complementar a análise.
 </div>""", unsafe_allow_html=True)
 
 por_ano = df.groupby("ano").agg(
@@ -224,9 +224,9 @@ with col_b:
 cresc = por_ano["casos"].pct_change().mean() * 100
 st.markdown(f"""
 <div class="info-box">
-<b>Analise:</b> Observando o grafico conseguimos identificar os anos com maior numero de casos.
-Picos epidemicos costumam ocorrer quando um novo sorotipo do virus se espalha ou quando as
-condicoes climaticas sao especialmente favoraveis para o mosquito.
+<b>Analise:</b> Observando o gráfico conseguimos identificar os anos com maior número de casos.
+Picos epidémicos costumam ocorrer quando um novo sorotipo do vírus se espalha ou quando as
+condições climáticas são especialmente favoráveis para o mosquito.
 Ano de pico: <b>{ano_pico}</b> com <b>{ano_pico_v:,.0f} casos</b>.
 Crescimento medio anual: <b>{cresc:+.1f}%</b>.
 </div>""", unsafe_allow_html=True)
@@ -235,9 +235,9 @@ Crescimento medio anual: <b>{cresc:+.1f}%</b>.
 st.markdown('<div class="sec">Comparacao Regional</div>', unsafe_allow_html=True)
 st.markdown("""
 <div class="analise-box">
-Usamos barras horizontais junto com um grafico de pizza para mostrar tanto o valor absoluto
-quanto a proporcao de cada regiao. Isso ajuda a responder: qual regiao e mais afetada e qual
-e o peso de cada uma no total nacional? As cores foram escolhidas para diferenciar bem cada regiao.
+Usamos barras horizontais junto com um gráfico de pizza para mostrar tanto o valor absoluto
+quanto a proporção de cada região. Isso ajuda a responder: qual região é mais afetada e qual
+é o peso de cada uma no total nacional? As cores foram escolhidas para diferenciar bem cada regiao.
 </div>""", unsafe_allow_html=True)
 
 tab1, tab2 = st.tabs(["Por Regiao", "Por Estado (UF)"])
@@ -269,7 +269,7 @@ with tab1:
     por_reg_ano = df.groupby(["ano","regiao"])["casos_dengue"].sum().reset_index()
     fig = px.line(por_reg_ano, x="ano", y="casos_dengue", color="regiao",
                   markers=True, color_discrete_map=CORES,
-                  title="Evolucao por Regiao ao Longo do Tempo",
+                  title="Evolução por Região ao Longo do Tempo",
                   labels={"casos_dengue":"Casos","ano":"Ano","regiao":"Regiao"})
     fig.update_layout(hovermode="x unified", plot_bgcolor="rgba(0,0,0,0)",
                       paper_bgcolor="rgba(0,0,0,0)", font_color="#f7fafc")
@@ -278,10 +278,10 @@ with tab1:
     reg_lider = df.groupby("regiao")["casos_dengue"].sum().idxmax()
     st.markdown(f"""
     <div class="info-box">
-    <b>Analise:</b> A distribuicao regional mostra que a dengue nao afeta o Brasil de forma uniforme.
-    A regiao <b>{reg_lider}</b> concentrou o maior numero de casos no periodo analisado.
-    Regioes com clima mais quente e umido tendem a ter mais casos pois o mosquito se desenvolve
-    melhor nessas condicoes.
+    <b>Analise:</b> A distribuição regional mostra que a dengue não afeta o Brasil de forma uniforme.
+    A região <b>{reg_lider}</b> concentrou o maior número de casos no período analisado.
+    Regiões com clima mais quente e úmido tendem a ter mais casos pois o mosquito se desenvolve
+    melhor nessas condições.
     </div>""", unsafe_allow_html=True)
 
 with tab2:
@@ -299,18 +299,18 @@ with tab2:
     st.plotly_chart(fig, use_container_width=True)
     st.markdown(f"""
     <div class="info-box">
-    <b>Analise:</b> O grafico de barras por estado mostra quais unidades federativas concentram
+    <b>Analise:</b> O gráfico de barras por estado mostra quais unidades federativas concentram
     a maior carga da dengue. O estado mais afetado foi <b>{uf_top}</b>. Estados com grandes
-    centros urbanos e clima favoravel tendem a liderar o ranking.
+    centros urbanos e clima favorável tendem a liderar o ranking.
     </div>""", unsafe_allow_html=True)
 
 # ── Sazonalidade ──────────────────────────────────────────────────────────
 st.markdown('<div class="sec">Sazonalidade</div>', unsafe_allow_html=True)
 st.markdown("""
 <div class="analise-box">
-O heatmap e perfeito para esse tipo de analise porque permite ver ao mesmo tempo o comportamento
-mensal e anual dos casos. Cada celula representa um mes de um determinado ano. Quanto mais
-escura a cor, mais casos naquele periodo. Esse grafico responde a pergunta: existe um padrao
+O heatmap é perfeito para esse tipo de análise porque permite ver ao mesmo tempo o comportamento
+mensal e anual dos casos. Cada célula representa um mês de um determinado ano. Quanto mais
+escura a cor, mais casos naquele período. Esse gráfico responde a pergunta: existe um padrão
 que se repete todo ano?
 </div>""", unsafe_allow_html=True)
 
@@ -333,7 +333,7 @@ mes_pico = sazon.loc[sazon["casos_dengue"].idxmax(), "nome_mes"]
 
 fig2 = px.bar(sazon, x="nome_mes", y="casos_dengue",
               color="casos_dengue", color_continuous_scale="YlOrRd",
-              title="Media Historica Mensal de Casos",
+              title="Média Histórica Mensal de Casos",
               labels={"casos_dengue":"Media de Casos","nome_mes":"Mes"},
               category_orders={"nome_mes": MESES})
 fig2.update_layout(coloraxis_showscale=False, plot_bgcolor="rgba(0,0,0,0)",
@@ -342,22 +342,22 @@ st.plotly_chart(fig2, use_container_width=True)
 
 st.markdown(f"""
 <div class="alert-box">
-<b>Analise:</b> O heatmap deixa claro o padrao sazonal da dengue. As celulas mais escuras se
-concentram nos primeiros meses do ano (janeiro a abril), que correspondem ao verao no hemisferio Sul.
-Esse e o periodo de maior calor e chuvas, favorecendo a proliferacao do mosquito.
-O mes historicamente mais critico e <b>{mes_pico}</b> e esse padrao se repete em praticamente
+<b>Analise:</b> O heatmap deixa claro o padrão sazonal da dengue. As células mais escuras se
+concentram nos primeiros meses do ano (janeiro a abril), que correspondem ao verão no hemisfério Sul.
+Esse é o período de maior calor e chuvas, favorecendo a proliferação do mosquito.
+O mês historicamente mais crítico e <b>{mes_pico}</b> e esse padrão se repete em praticamente
 todos os anos analisados.
 </div>""", unsafe_allow_html=True)
 
 # ── Chuva x Dengue ────────────────────────────────────────────────────────
-st.markdown('<div class="sec">Relacao entre Chuva e Casos de Dengue</div>', unsafe_allow_html=True)
+st.markdown('<div class="sec">Relação entre Chuva e Casos de Dengue</div>', unsafe_allow_html=True)
 st.markdown("""
 <div class="analise-box">
-Aqui queremos mostrar se os meses com mais chuva tambem tem mais casos. Usamos um grafico com
-eixo duplo: as barras representam a chuva media e a linha representa os casos medios. Assim da
-pra comparar os dois ao mesmo tempo. A teoria e que mais chuva = mais agua parada = mais
+Aqui queremos mostrar se os meses com mais chuva tambem tem mais casos. Usamos um gráfico com
+eixo duplo: as barras representam a chuva média e a linha representa os casos médios. Assim da
+pra comparar os dois ao mesmo tempo. A teoria é que mais chuva = mais água parada = mais
 mosquito = mais dengue. Note que existe uma defasagem de 2 a 4 semanas entre o aumento das
-chuvas e o aumento dos casos — esse e o tempo do ciclo de vida do mosquito.
+chuvas e o aumento dos casos, esse é o tempo do ciclo de vida do mosquito.
 </div>""", unsafe_allow_html=True)
 
 med = df.groupby("mes").agg(
@@ -373,7 +373,7 @@ fig2.add_trace(go.Scatter(x=med["nome_mes"], y=med["casos"],
                           name="Casos medios", mode="lines+markers",
                           line=dict(color="#fc8181", width=2.5)),
                secondary_y=True)
-fig2.update_layout(title="Chuva e Casos - Medias Mensais Historicas",
+fig2.update_layout(title="Chuva e Casos - Médias Mensais Históricas",
                    hovermode="x unified",
                    plot_bgcolor="rgba(0,0,0,0)",
                    paper_bgcolor="rgba(0,0,0,0)",
@@ -388,8 +388,8 @@ forca = "forte" if abs(r) > .6 else "moderada" if abs(r) > .3 else "fraca"
 st.markdown(f"""
 <div class="info-box">
 <b>Analise:</b> O coeficiente de Pearson entre chuva e casos e <b>r = {r:.3f}</b>,
-indicando correlacao <b>{forca}</b>. Meses chuvosos tendem a registrar mais casos,
-com defasagem de 2 a 4 semanas — tempo necessario para o ciclo de vida do mosquito
+indicando correlação <b>{forca}</b>. Meses chuvosos tendem a registrar mais casos,
+com defasagem de 2 a 4 semanas, tempo necessário para o ciclo de vida do mosquito
 se completar.
 </div>""", unsafe_allow_html=True)
 
@@ -397,10 +397,10 @@ se completar.
 st.markdown('<div class="sec">Ranking de Municipios</div>', unsafe_allow_html=True)
 st.markdown("""
 <div class="analise-box">
-Nesse grafico decidimos usar a incidencia (casos por 100 mil habitantes) em vez do total de
-casos, porque isso e mais justo. Por exemplo, uma cidade pequena com 500 casos pode ser mais
-grave do que uma cidade grande com 2000 casos, dependendo do tamanho da populacao. As barras
-horizontais facilitam a leitura dos nomes dos municipios.
+Nesse gráfico decidimos usar a incidência (casos por 100 mil habitantes) em vez do total de
+casos, porque isso é mais justo. Por exemplo, uma cidade pequena com 500 casos pode ser mais
+grave do que uma cidade grande com 2000 casos, dependendo do tamanho da população. As barras
+horizontais facilitam a leitura dos nomes dos municípios.
 </div>""", unsafe_allow_html=True)
 
 rank = (df.groupby(["municipio","uf","regiao"])
@@ -424,10 +424,10 @@ st.plotly_chart(fig, use_container_width=True)
 
 st.markdown(f"""
 <div class="info-box">
-<b>Analise:</b> O municipio <b>{mun_top}</b> lidera o ranking com incidencia media de
-<b>{mun_inc:.1f} casos por 100 mil habitantes</b>. Esses municipios merecem atencao
-prioritaria das autoridades sanitarias, pois indicam areas onde o controle do mosquito
-e mais urgente.
+<b>Analise:</b> O município <b>{mun_top}</b> lidera o ranking com incidência média de
+<b>{mun_inc:.1f} casos por 100 mil habitantes</b>. Esses municípios merecem atenção
+prioritária das autoridades sanitárias, pois indicam áreas onde o controle do mosquito
+é mais urgente.
 </div>""", unsafe_allow_html=True)
 
 # ── Nivel de Alerta ───────────────────────────────────────────────────────
@@ -457,10 +457,10 @@ with cf:
 st.markdown('<div class="sec">Tabela Dinamica</div>', unsafe_allow_html=True)
 st.markdown("""
 <div class="analise-box">
-Alem dos graficos, e importante mostrar os dados em formato de tabela para quem quiser
-consultar os numeros exatos. O gradiente de cores em vermelho facilita a identificacao
-visual dos periodos e estados mais criticos sem precisar ler todos os numeros.
-Use os seletores abaixo para personalizar a visualizacao.
+Além dos gráficos, é importante mostrar os dados em formato de tabela para quem quiser
+consultar os números exatos. O gradiente de cores em vermelho facilita a identificação
+visual dos períodos e estados mais críticos sem precisar ler todos os números.
+Use os seletores abaixo para personalizar a visualização.
 </div>""", unsafe_allow_html=True)
 
 c1t, c2t = st.columns(2)
@@ -527,14 +527,14 @@ st.markdown(f"""
 <br>
 <h4 style="color:#68d391;margin-bottom:6px">Recomendacoes</h4>
 <ul>
-  <li>Campanhas de eliminacao de focos em <b>outubro-dezembro</b></li>
-  <li>Reforco hospitalar em <b>janeiro-abril</b></li>
-  <li>Vigilancia intensiva nos municipios criticos</li>
-  <li>Alertas climaticos integrados com previsao de chuvas</li>
+  <li>Campanhas de eliminação de focos em <b>outubro-dezembro</b></li>
+  <li>Reforço hospitalar em <b>janeiro-abril</b></li>
+  <li>Vigilância intensiva nos municípios críticos</li>
+  <li>Alertas climáticos integrados com previsão de chuvas</li>
 </ul>
 
 </div>
 """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
-st.caption("Projeto G2 - Dengue Brasil - Dados simulados para fins didaticos | Ariene Viana Marins e Joao Marcelo Lopes")
+st.caption("Projeto G2 - Dengue Brasil - Dados simulados para fins didáticos | Ariene Viana Marins e João Marcelo Lopes")
