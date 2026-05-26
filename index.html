@@ -6,119 +6,354 @@
   <title>Evolução dos Casos de Dengue no Brasil</title>
 
   <style>
-    /* Mosquito decorativo fixo no canto */
-    .deco-mosquito {
+    /* Importação de fonte moderna */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    /* Variáveis de cor */
+    :root {
+      --vermelho:     #c0392b;
+      --vermelho-dk:  #7b0000;
+      --laranja:      #e67e22;
+      --branco:       #ffffff;
+      --cinza-claro:  #f4f6f8;
+      --cinza-medio:  #e2e8f0;
+      --texto:        #1a1a2e;
+      --texto-suave:  #555;
+    }
+
+    /* Reset e base */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--cinza-claro);
+      color: var(--texto);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── MOSQUITOS ESPALHADOS PELO FUNDO ── */
+    .mosquito-bg {
       position: fixed;
-      bottom: 5vh;
-      right: 3vw;
-      opacity: 0.07;
-      width: min(22vw, 180px);
+      inset: 0;
       pointer-events: none;
       z-index: 0;
-      animation: flutuar 6s ease-in-out infinite;
+      overflow: hidden;
     }
 
-    /* Animação de flutuação do mosquito */
+    /* Cada mosquito individual de fundo */
+    .mosquito-bg svg {
+      position: absolute;
+      opacity: 0.045;
+      animation: flutuar var(--dur, 7s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    /* Posições e tamanhos de cada mosquito */
+    .mosquito-bg svg:nth-child(1)  { top:  5%; left:  3%;  width: 90px;  --dur: 6s;   --delay: 0s;   }
+    .mosquito-bg svg:nth-child(2)  { top: 12%; left: 80%;  width: 120px; --dur: 8s;   --delay: 1s;   transform: rotate(40deg);  }
+    .mosquito-bg svg:nth-child(3)  { top: 30%; left: 50%;  width: 70px;  --dur: 5.5s; --delay: 2s;   transform: rotate(-20deg); }
+    .mosquito-bg svg:nth-child(4)  { top: 45%; left: 10%;  width: 110px; --dur: 9s;   --delay: 0.5s; transform: rotate(15deg);  }
+    .mosquito-bg svg:nth-child(5)  { top: 60%; left: 70%;  width: 80px;  --dur: 7s;   --delay: 3s;   transform: rotate(-35deg); }
+    .mosquito-bg svg:nth-child(6)  { top: 75%; left: 30%;  width: 100px; --dur: 6.5s; --delay: 1.5s; }
+    .mosquito-bg svg:nth-child(7)  { top: 85%; left: 88%;  width: 65px;  --dur: 8.5s; --delay: 2.5s; transform: rotate(25deg);  }
+    .mosquito-bg svg:nth-child(8)  { top: 92%; left:  5%;  width: 85px;  --dur: 7.5s; --delay: 0.8s; transform: rotate(-10deg); }
+
+    /* Animação de flutuação suave */
     @keyframes flutuar {
-      0%, 100% { transform: translateY(0) rotate(8deg); }
-      50%       { transform: translateY(-16px) rotate(8deg); }
+      0%, 100% { transform: translateY(0px)   rotate(var(--rot, 0deg)); }
+      50%       { transform: translateY(-14px) rotate(var(--rot, 0deg)); }
     }
 
-    /* Estilos gerais da página */
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f4f6f8;
-      color: #222;
-    }
-
-    /* Cabeçalho com gradiente */
+    /* ── CABEÇALHO ── */
     header {
-      background: linear-gradient(135deg, #7b0000, #c0392b);
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(135deg, var(--vermelho-dk) 0%, var(--vermelho) 60%, var(--laranja) 100%);
       color: white;
-      padding: 50px 20px;
+      padding: 60px 20px 50px;
       text-align: center;
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+      padding-bottom: 80px;
+    }
+
+    /* Etiqueta de disciplina */
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 999px;
+      padding: 4px 16px;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
     }
 
     header h1 {
-      margin: 0;
-      font-size: 2.4rem;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
     }
 
     header p {
+      font-size: 1rem;
+      font-weight: 300;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ── CONTEÚDO PRINCIPAL ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 50px 20px 60px;
+    }
+
+    /* ── SEÇÕES ── */
+    section {
+      background: var(--branco);
+      margin-bottom: 28px;
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      border-top: 4px solid transparent;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    /* Cor de destaque ao passar o mouse */
+    section:hover {
+      border-top-color: var(--vermelho);
+      box-shadow: 0 8px 28px rgba(192,57,43,0.12);
+    }
+
+    /* Cabeçalho de cada seção com ícone */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Ícone colorido da seção */
+    .section-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--vermelho), var(--laranja));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    h2 {
+      color: var(--vermelho-dk);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    p, li {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: var(--texto-suave);
+    }
+
+    ul {
+      padding-left: 1.4rem;
+    }
+
+    li { margin-bottom: 6px; }
+
+    /* ── GRADE DE CARTÕES ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    /* Cartão individual da grade */
+    .card {
+      background: #fff8f8;
+      border: 1px solid rgba(192,57,43,0.15);
+      border-left: 4px solid var(--vermelho);
+      padding: 16px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      color: var(--texto-suave);
+      transition: transform 0.2s;
+    }
+
+    .card:hover { transform: translateY(-3px); }
+
+    .card strong {
+      display: block;
+      color: var(--texto);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    /* ── BOTÕES ── */
+    .botoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
       margin-top: 12px;
     }
 
-    /* Área principal centralizada */
-    main {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    /* Seções com cartão branco */
-    section {
-      background: white;
-      margin-bottom: 24px;
-      padding: 28px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    /* Títulos das seções */
-    h2 {
-      color: #c0392b;
-      margin-top: 0;
-    }
-
-    /* Grade de cartões */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
-
-    /* Cartão individual */
-    .card {
-      background: #fdf4f4;
-      border-left: 5px solid #c0392b;
-      padding: 16px;
-      border-radius: 8px;
-    }
-
-    /* Botões de acesso */
+    /* Botão principal */
     .button {
-      display: inline-block;
-      margin: 8px 8px 8px 0;
-      padding: 12px 18px;
-      background: #c0392b;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      background: linear-gradient(135deg, var(--vermelho), var(--laranja));
       color: white;
       text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 4px 14px rgba(192,57,43,0.3);
     }
 
-    /* Botão secundário (cor mais escura) */
+    /* Botão secundário */
     .button.secondary {
-      background: #7b0000;
+      background: linear-gradient(135deg, var(--vermelho-dk), var(--vermelho));
+      box-shadow: 0 4px 14px rgba(123,0,0,0.25);
     }
 
-    /* Rodapé escuro */
+    .button:hover { opacity: 0.88; transform: translateY(-2px); }
+
+    /* ── RODAPÉ ── */
     footer {
+      position: relative;
+      z-index: 1;
       text-align: center;
-      padding: 24px;
-      background: #1a0000;
+      padding: 30px 20px;
+      background: linear-gradient(135deg, var(--vermelho-dk), #2d0000);
+      color: rgba(255,255,255,0.85);
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+
+    footer strong {
       color: white;
-      margin-top: 40px;
     }
   </style>
 </head>
 
 <body>
 
+  <!-- Mosquitos espalhados pelo fundo da página -->
+  <div class="mosquito-bg" aria-hidden="true">
+    <!-- Mosquito 1 -->
+    <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="58" rx="10" ry="20" fill="#c0392b"/>
+      <line x1="50" y1="38" x2="50" y2="10" stroke="#c0392b" stroke-width="2"/>
+      <line x1="50" y1="10" x2="28" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="10" x2="72" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <ellipse cx="30" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(-15 30 50)"/>
+      <ellipse cx="70" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(15 70 50)"/>
+      <line x1="40" y1="78" x2="28" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="78" x2="50" y2="112" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="60" y1="78" x2="72" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+    </svg>
+    <!-- Mosquito 2 -->
+    <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="58" rx="10" ry="20" fill="#c0392b"/>
+      <line x1="50" y1="38" x2="50" y2="10" stroke="#c0392b" stroke-width="2"/>
+      <line x1="50" y1="10" x2="28" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="10" x2="72" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <ellipse cx="30" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(-15 30 50)"/>
+      <ellipse cx="70" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(15 70 50)"/>
+      <line x1="40" y1="78" x2="28" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="78" x2="50" y2="112" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="60" y1="78" x2="72" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+    </svg>
+    <!-- Mosquito 3 -->
+    <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="58" rx="10" ry="20" fill="#c0392b"/>
+      <line x1="50" y1="38" x2="50" y2="10" stroke="#c0392b" stroke-width="2"/>
+      <line x1="50" y1="10" x2="28" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="10" x2="72" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <ellipse cx="30" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(-15 30 50)"/>
+      <ellipse cx="70" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(15 70 50)"/>
+      <line x1="40" y1="78" x2="28" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="78" x2="50" y2="112" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="60" y1="78" x2="72" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+    </svg>
+    <!-- Mosquito 4 -->
+    <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="58" rx="10" ry="20" fill="#c0392b"/>
+      <line x1="50" y1="38" x2="50" y2="10" stroke="#c0392b" stroke-width="2"/>
+      <line x1="50" y1="10" x2="28" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="10" x2="72" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <ellipse cx="30" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(-15 30 50)"/>
+      <ellipse cx="70" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(15 70 50)"/>
+      <line x1="40" y1="78" x2="28" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="78" x2="50" y2="112" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="60" y1="78" x2="72" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+    </svg>
+    <!-- Mosquito 5 -->
+    <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="58" rx="10" ry="20" fill="#c0392b"/>
+      <line x1="50" y1="38" x2="50" y2="10" stroke="#c0392b" stroke-width="2"/>
+      <line x1="50" y1="10" x2="28" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="10" x2="72" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <ellipse cx="30" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(-15 30 50)"/>
+      <ellipse cx="70" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(15 70 50)"/>
+      <line x1="40" y1="78" x2="28" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="78" x2="50" y2="112" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="60" y1="78" x2="72" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+    </svg>
+    <!-- Mosquito 6 -->
+    <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="58" rx="10" ry="20" fill="#c0392b"/>
+      <line x1="50" y1="38" x2="50" y2="10" stroke="#c0392b" stroke-width="2"/>
+      <line x1="50" y1="10" x2="28" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="10" x2="72" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <ellipse cx="30" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(-15 30 50)"/>
+      <ellipse cx="70" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(15 70 50)"/>
+      <line x1="40" y1="78" x2="28" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="78" x2="50" y2="112" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="60" y1="78" x2="72" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+    </svg>
+    <!-- Mosquito 7 -->
+    <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="58" rx="10" ry="20" fill="#c0392b"/>
+      <line x1="50" y1="38" x2="50" y2="10" stroke="#c0392b" stroke-width="2"/>
+      <line x1="50" y1="10" x2="28" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="10" x2="72" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <ellipse cx="30" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(-15 30 50)"/>
+      <ellipse cx="70" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(15 70 50)"/>
+      <line x1="40" y1="78" x2="28" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="78" x2="50" y2="112" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="60" y1="78" x2="72" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+    </svg>
+    <!-- Mosquito 8 -->
+    <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="58" rx="10" ry="20" fill="#c0392b"/>
+      <line x1="50" y1="38" x2="50" y2="10" stroke="#c0392b" stroke-width="2"/>
+      <line x1="50" y1="10" x2="28" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="10" x2="72" y2="2" stroke="#c0392b" stroke-width="1.5"/>
+      <ellipse cx="30" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(-15 30 50)"/>
+      <ellipse cx="70" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(15 70 50)"/>
+      <line x1="40" y1="78" x2="28" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="78" x2="50" y2="112" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="60" y1="78" x2="72" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+    </svg>
+  </div>
+
   <!-- Cabeçalho da página -->
   <header>
+    <div class="header-badge">🦟 Linguagens de Programação</div>
     <h1>Evolução dos Casos de Dengue no Brasil</h1>
     <p>Projeto de análise e visualização de dados com Python, Pandas, SQLAlchemy e Streamlit</p>
   </header>
@@ -127,11 +362,15 @@
 
     <!-- Seção: Sobre o projeto -->
     <section>
-      <h2>Sobre o projeto</h2>
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <h2>Sobre o projeto</h2>
+      </div>
       <p>
         Este projeto apresenta uma análise da evolução dos casos de dengue no Brasil ao longo dos anos,
         considerando distribuição por região, sazonalidade, tendências e perfil das populações afetadas.
       </p>
+      <br>
       <p>
         A proposta é demonstrar um fluxo completo de projeto analítico: preparação dos dados,
         análise exploratória, criação de indicadores, visualizações, dashboard interativo e publicação
@@ -141,7 +380,10 @@
 
     <!-- Seção: Perguntas de negócio -->
     <section>
-      <h2>Perguntas de negócio</h2>
+      <div class="section-header">
+        <div class="section-icon">❓</div>
+        <h2>Perguntas de negócio</h2>
+      </div>
       <ul>
         <li>Qual é a evolução dos casos de dengue ao longo dos anos no Brasil?</li>
         <li>Quais estados concentram o maior número de casos?</li>
@@ -154,18 +396,24 @@
 
     <!-- Seção: Indicadores analisados -->
     <section>
-      <h2>Indicadores analisados</h2>
+      <div class="section-header">
+        <div class="section-icon">📊</div>
+        <h2>Indicadores analisados</h2>
+      </div>
       <div class="grid">
-        <div class="card"><strong>Total de Casos</strong><br>Número absoluto de registros de dengue por período.</div>
-        <div class="card"><strong>Taxa de Incidência</strong><br>Casos por 100 mil habitantes em cada estado.</div>
-        <div class="card"><strong>Distribuição Regional</strong><br>Concentração de casos por região do Brasil.</div>
-        <div class="card"><strong>Evolução Temporal</strong><br>Variação dos casos semana a semana e ano a ano.</div>
+        <div class="card"><strong>Total de Casos</strong>Número absoluto de registros de dengue por período.</div>
+        <div class="card"><strong>Taxa de Incidência</strong>Casos por 100 mil habitantes em cada estado.</div>
+        <div class="card"><strong>Distribuição Regional</strong>Concentração de casos por região do Brasil.</div>
+        <div class="card"><strong>Evolução Temporal</strong>Variação dos casos semana a semana e ano a ano.</div>
       </div>
     </section>
 
     <!-- Seção: Tecnologias utilizadas -->
     <section>
-      <h2>Tecnologias utilizadas</h2>
+      <div class="section-header">
+        <div class="section-icon">🛠️</div>
+        <h2>Tecnologias utilizadas</h2>
+      </div>
       <div class="grid">
         <div class="card">Python</div>
         <div class="card">Pandas</div>
@@ -180,29 +428,43 @@
 
     <!-- Seção: Arquivos do projeto -->
     <section>
-      <h2>Arquivos do projeto</h2>
+      <div class="section-header">
+        <div class="section-icon">📁</div>
+        <h2>Arquivos do projeto</h2>
+      </div>
       <p>Acesse os principais componentes do projeto:</p>
-      <a class="button" href="https://github.com/Arienee/dengue_brasil/blob/main/notebooks/analise_dengue_(1).ipynb" target="_blank">Ver Notebook</a>
-      <a class="button secondary" href="https://github.com/Arienee/dengue_brasil/blob/main/dados/simulacao_dengue_brasil.csv" target="_blank">Baixar Base de Dados</a>
+      <div class="botoes">
+        <a class="button" href="https://github.com/Arienee/dengue_brasil/blob/main/notebooks/analise_dengue_(1).ipynb" target="_blank">📓 Ver Notebook</a>
+        <a class="button secondary" href="https://github.com/Arienee/dengue_brasil/blob/main/dados/simulacao_dengue_brasil.csv" target="_blank">📥 Baixar Base de Dados</a>
+      </div>
     </section>
 
     <!-- Seção: Dashboard interativo -->
     <section>
-      <h2>Dashboard interativo</h2>
+      <div class="section-header">
+        <div class="section-icon">🖥️</div>
+        <h2>Dashboard interativo</h2>
+      </div>
       <p>
         O dashboard principal foi desenvolvido com Streamlit e permite explorar os dados por meio
         de filtros, KPIs, gráficos e mapas interativos.
       </p>
-      <a class="button" href="https://dengue-brasil-awqeamzzyavwxw4pffcfeo.streamlit.app/" target="_blank">Acessar Dashboard Streamlit</a>
+      <div class="botoes">
+        <a class="button" href="https://dengue-brasil-awqeamzzyavwxw4pffcfeo.streamlit.app/" target="_blank">🚀 Acessar Dashboard Streamlit</a>
+      </div>
     </section>
 
     <!-- Seção: Objetivo pedagógico -->
     <section>
-      <h2>Objetivo pedagógico</h2>
+      <div class="section-header">
+        <div class="section-icon">🎓</div>
+        <h2>Objetivo pedagógico</h2>
+      </div>
       <p>
         Este projeto serve como referência para a avaliação da disciplina de Linguagens de Programação,
         mostrando como transformar uma base de dados em um produto analítico completo, organizado e publicável.
       </p>
+      <br>
       <p>
         Mais importante do que criar gráficos é responder perguntas relevantes e apoiar a compreensão
         de um problema de saúde pública de grande impacto no Brasil.
@@ -211,10 +473,10 @@
 
   </main>
 
-  <!-- Rodapé com integrantes -->
+  <!-- Rodapé com integrantes e disciplina -->
   <footer>
-    <p>Projeto desenvolvido para fins educacionais — Linguagens de Programação</p>
-    <p>Ariene Viana Marina &nbsp;|&nbsp; João Marcelo Lopes Alves</p>
+    <p>Projeto desenvolvido para fins educacionais — <strong>Linguagens de Programação</strong></p>
+    <p><strong>Ariene Viana Marina</strong> &nbsp;|&nbsp; <strong>João Marcelo Lopes Alves</strong></p>
   </footer>
 
 </body>
