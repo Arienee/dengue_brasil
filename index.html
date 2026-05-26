@@ -267,13 +267,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── CONTADOR REGRESSIVO ── */
-    #countdown {
-      display: inline-block;
-      font-weight: 500;
-      color: var(--red);
-    }
-
     /* ── MOSQUITO DECORATIVO (SVG) ── */
     .deco-mosquito {
       position: absolute;
@@ -327,6 +320,7 @@
         </svg>
         Acessar o Painel Interativo
       </a>
+
     </div>
 
     <div class="divider"></div>
@@ -384,6 +378,13 @@
     Projeto acadêmico desenvolvido com Python · Streamlit · Pandas · Plotly &nbsp;|&nbsp;
     Dados: Ministério da Saúde / SINAN
   </footer>
+
+  <script>
+    // Cancela qualquer comportamento padrão do botão (sem redirecionamento automático)
+    document.getElementById('cta-btn').addEventListener('click', () => {
+      window.open('https://dengue-brasil-awqeamzzyavwxw4pffcfeo.streamlit.app/', '_blank');
+    });
+  </script>
 
 </body>
 </html>
