@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dengue Brasil — Análise de Dados</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #c0392b;
+      --red-dk: #96281b;
+      --amber:  #e67e22;
+      --cream:  #ffffff;
+      --dark:   #111111;
+      --mid:    #333333;
+      --muted:  #666666;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* ── TEXTURA DE FUNDO ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── SEÇÃO PRINCIPAL ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* círculo decorativo de fundo */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -20vw;
+      right: -20vw;
+      width: 70vw;
+      height: 70vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(192,57,43,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .35rem 1rem;
+      border: 1.5px solid var(--red);
+      border-radius: 999px;
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 2.2rem;
+      animation: fadeUp .7s ease both;
+    }
+
+    .badge span { font-size: .9rem; }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 9vw, 7.5rem);
+      font-weight: 900;
+      line-height: .95;
+      color: var(--dark);
+      animation: fadeUp .8s .1s ease both;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--red);
+      position: relative;
+    }
+
+    h1 em::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: .05em;
+      width: 100%; height: .06em;
+      background: var(--amber);
+      border-radius: 2px;
+    }
+
+    .subtitle {
+      margin-top: 1.8rem;
+      max-width: 520px;
+      font-size: 1.05rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--mid);
+      animation: fadeUp .8s .2s ease both;
+    }
+
+    /* ── BOTÃO DE ACESSO ── */
+    .cta-wrap {
+      margin-top: 3rem;
+      animation: fadeUp .8s .35s ease both;
+    }
+
+    .cta {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: .75rem;
+      padding: 1rem 2.2rem;
+      background: var(--red);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 6px 24px rgba(192,57,43,.35);
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.15) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform .5s;
+    }
+
+    .cta:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(192,57,43,.45); }
+    .cta:hover::before { transform: translateX(100%); }
+
+    .cta svg { flex-shrink: 0; }
+
+    .cta-note {
+      margin-top: .9rem;
+      font-size: .78rem;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+
+    /* ── LINHA DIVISÓRIA ── */
+    .divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--red), var(--amber));
+      border-radius: 2px;
+      margin: 4rem auto 0;
+    }
+
+    /* ── LINHA DE ESTATÍSTICAS ── */
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2.5rem;
+      padding: 4rem 1.5rem 5rem;
+      animation: fadeUp .9s .5s ease both;
+    }
+
+    .stat {
+      text-align: center;
+      min-width: 140px;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--red);
+      line-height: 1;
+    }
+
+    .stat-label {
+      margin-top: .4rem;
+      font-size: .78rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── CARTÕES DE FUNCIONALIDADES ── */
+    .cards-section {
+      padding: 0 1.5rem 6rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      color: var(--dark);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid rgba(192,57,43,.12);
+      border-radius: 8px;
+      padding: 1.6rem 1.4rem;
+      transition: transform .25s, box-shadow .25s;
+    }
+
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(192,57,43,.1); }
+
+    .card-icon {
+      font-size: 1.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: .5rem;
+      color: var(--dark);
+    }
+
+    .card p {
+      font-size: .85rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    /* ── RODAPÉ ── */
+    footer {
+      border-top: 1px solid rgba(192,57,43,.15);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      font-size: .78rem;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+
+    /* ── ANIMAÇÕES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CONTADOR REGRESSIVO ── */
+    #countdown {
+      display: inline-block;
+      font-weight: 500;
+      color: var(--red);
+    }
+
+    /* ── MOSQUITO DECORATIVO (SVG) ── */
+    .deco-mosquito {
+      position: absolute;
+      bottom: 6vh;
+      left: 4vw;
+      opacity: .06;
+      width: min(28vw, 220px);
+      pointer-events: none;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-8deg); }
+      50%       { transform: translateY(-18px) rotate(-8deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SEÇÃO PRINCIPAL -->
+  <section class="hero">
+
+    <!-- mosquito decorativo em SVG -->
+    <svg class="deco-mosquito" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <ellipse cx="50" cy="58" rx="10" ry="20" fill="#c0392b"/>
+      <line x1="50" y1="38" x2="50" y2="10" stroke="#c0392b" stroke-width="2"/>
+      <line x1="50" y1="10" x2="28" y2="2"  stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="10" x2="72" y2="2"  stroke="#c0392b" stroke-width="1.5"/>
+      <ellipse cx="30" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(-15 30 50)"/>
+      <ellipse cx="70" cy="50" rx="22" ry="8" fill="#c0392b" opacity=".5" transform="rotate(15 70 50)"/>
+      <line x1="40" y1="78" x2="28" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="50" y1="78" x2="50" y2="112" stroke="#c0392b" stroke-width="1.5"/>
+      <line x1="60" y1="78" x2="72" y2="110" stroke="#c0392b" stroke-width="1.5"/>
+    </svg>
+
+    <div class="badge"><span>🦟</span> Trabalho Acadêmico · Análise de Dados</div>
+
+    <h1>Dengue no<br/><em>Brasil</em></h1>
+
+    <p class="subtitle">
+      Um painel interativo com visualizações, tendências e análise epidemiológica
+      dos casos de dengue em todo o território nacional.
+    </p>
+
+    <div class="cta-wrap">
+      <a class="cta" id="cta-btn" href="https://dengue-brasil-awqeamzzyavwxw4pffcfeo.streamlit.app/" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/>
+          <line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+        Acessar o Painel Interativo
+      </a>
+      <p class="cta-note">Redirecionando automaticamente em <span id="countdown">5</span>s…</p>
+    </div>
+
+    <div class="divider"></div>
+  </section>
+
+  <!-- ESTATÍSTICAS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">27</div>
+      <div class="stat-label">Estados analisados</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5.570</div>
+      <div class="stat-label">Municípios cobertos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">+10</div>
+      <div class="stat-label">Anos de dados</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Código aberto</div>
+    </div>
+  </div>
+
+  <!-- CARTÕES -->
+  <section class="cards-section">
+    <h2 class="section-title">O que você encontra no painel</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🗺️</div>
+        <h3>Mapa de Calor</h3>
+        <p>Visualização geográfica dos focos de dengue por estado e município ao longo do tempo.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h3>Séries Temporais</h3>
+        <p>Evolução dos casos semana a semana, com destaque para surtos e sazonalidade.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔬</div>
+        <h3>Análise Epidemiológica</h3>
+        <p>Taxas de incidência, mortalidade e perfil das populações mais afetadas.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Filtros Interativos</h3>
+        <p>Recorte por período, região, faixa etária e outros fatores de interesse.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RODAPÉ -->
+  <footer>
+    Projeto acadêmico desenvolvido com Python · Streamlit · Pandas · Plotly &nbsp;|&nbsp;
+    Dados: Ministério da Saúde / SINAN
+  </footer>
+
+  <script>
+    // Contador regressivo + redirecionamento automático
+    let seconds = 5;
+    const el = document.getElementById('countdown');
+    const timer = setInterval(() => {
+      seconds--;
+      el.textContent = seconds;
+      if (seconds <= 0) {
+        clearInterval(timer);
+        window.location.href = 'https://dengue-brasil-awqeamzzyavwxw4pffcfeo.streamlit.app/';
+      }
+    }, 1000);
+
+    // Cancela o redirecionamento se o usuário clicar no botão manualmente
+    document.getElementById('cta-btn').addEventListener('click', () => {
+      clearInterval(timer);
+      document.querySelector('.cta-note').style.display = 'none';
+    });
+  </script>
+
+</body>
+</html>
