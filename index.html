@@ -46,7 +46,8 @@
     /* Cada mosquito posicionado individualmente */
     .mosquito-bg svg {
       position: absolute;
-      opacity: 0.06;
+      opacity: 0.45;
+      filter: drop-shadow(0 0 6px rgba(231,76,60,0.7));
       animation: flutuar var(--dur, 7s) ease-in-out infinite;
       animation-delay: var(--delay, 0s);
     }
@@ -608,7 +609,7 @@
     <ul class="nav-links">
       <li><a href="#sobre">Sobre</a></li>
       <li><a href="#indicadores">Indicadores</a></li>
-      <li><a href="#rodar">Como rodar</a></li>
+      <li><a href="#readme">README</a></li>
       <li><a href="#dashboard">Dashboard</a></li>
     </ul>
   </nav>
@@ -702,83 +703,14 @@
       </div>
     </div>
 
-    <!-- Seção: Estrutura do projeto -->
-    <div style="margin-top:40px">
-      <div class="section-label"><h2>Estrutura do projeto</h2></div>
+    <!-- Seção: README e arquivos do projeto -->
+    <div id="readme" style="margin-top:40px">
+      <div class="section-label"><h2>Documentação e arquivos</h2></div>
       <div class="bloco">
-        <div class="code-block">
-<span class="path">dengue-brasil/</span>
-├── <span class="hl">app.py</span>                          <span class="comment">← Dashboard (Streamlit)</span>
-├── <span class="cmd">requirements.txt</span>                <span class="comment">← Lista de bibliotecas</span>
-├── <span class="cmd">README.md</span>
-├── <span class="path">dados/</span>
-│   └── <span class="hl">simulacao_dengue_brasil.csv</span> <span class="comment">← Base de dados</span>
-├── <span class="path">database/</span>
-│   └── <span class="cmd">dengue.sqlite</span>               <span class="comment">← Criado automaticamente</span>
-├── <span class="path">notebooks/</span>
-│   └── <span class="hl">analise_dengue.ipynb</span>        <span class="comment">← Notebook (Google Colab)</span>
-└── <span class="path">.streamlit/</span>
-    └── <span class="cmd">config.toml</span>                 <span class="comment">← Tema visual</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Seção: Como rodar localmente -->
-    <div id="rodar" style="margin-top:40px">
-      <div class="section-label"><h2>Como rodar localmente (Windows)</h2></div>
-      <div class="bloco">
-        <div class="steps">
-          <!-- Passo 1 -->
-          <div class="step">
-            <div class="step-num">1</div>
-            <div class="step-body">
-              <strong>Instalar as dependências</strong>
-              <p>Abra o Prompt de Comando e cole o comando abaixo:</p>
-              <div class="code-block"><span class="cmd">pip install</span> streamlit pandas numpy plotly sqlalchemy statsmodels</div>
-            </div>
-          </div>
-          <!-- Passo 2 -->
-          <div class="step">
-            <div class="step-num">2</div>
-            <div class="step-body">
-              <strong>Entrar na pasta do projeto</strong>
-              <div class="code-block"><span class="cmd">cd</span> <span class="path">C:\caminho\para\dengue-brasil</span></div>
-            </div>
-          </div>
-          <!-- Passo 3 -->
-          <div class="step">
-            <div class="step-num">3</div>
-            <div class="step-body">
-              <strong>Rodar o dashboard</strong>
-              <div class="code-block"><span class="cmd">streamlit run</span> <span class="hl">app.py</span></div>
-              <p>O navegador abrirá automaticamente em <code style="color:#a6e3a1">http://localhost:8501</code></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Seção: Como usar o notebook no Colab -->
-    <div style="margin-top:40px">
-      <div class="section-label"><h2>Como usar o notebook no Google Colab</h2></div>
-      <div class="bloco">
-        <div class="steps">
-          <div class="step"><div class="step-num">1</div><div class="step-body"><p>Acesse <a href="https://colab.research.google.com" target="_blank" style="color:var(--r2)">colab.research.google.com</a></p></div></div>
-          <div class="step"><div class="step-num">2</div><div class="step-body"><p>Clique em <strong style="color:var(--txt)">Arquivo → Fazer upload de notebook</strong></p></div></div>
-          <div class="step"><div class="step-num">3</div><div class="step-body"><p>Selecione o arquivo <code style="color:#a6e3a1">notebooks/analise_dengue.ipynb</code></p></div></div>
-          <div class="step"><div class="step-num">4</div><div class="step-body"><p>Execute a primeira célula — ela pedirá para fazer upload do CSV (<code style="color:#a6e3a1">dados/simulacao_dengue_brasil.csv</code>)</p></div></div>
-          <div class="step"><div class="step-num">5</div><div class="step-body"><p>Execute todas as células com <strong style="color:var(--txt)">Ctrl + F9</strong></p></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Seção: Arquivos do projeto -->
-    <div style="margin-top:40px">
-      <div class="section-label"><h2>Arquivos do projeto</h2></div>
-      <div class="bloco">
-        <p>Acesse os principais componentes diretamente pelo GitHub:</p>
+        <p>Acesse a documentação completa do projeto, incluindo instruções de instalação, estrutura de pastas e como rodar localmente.</p>
         <div class="btn-group">
-          <a class="btn btn-primary" href="https://github.com/Arienee/dengue_brasil/blob/main/notebooks/analise_dengue_(1).ipynb" target="_blank">📓 Ver Notebook</a>
+          <a class="btn btn-primary" href="https://github.com/Arienee/dengue_brasil/blob/main/README.md" target="_blank">📄 Ver README</a>
+          <a class="btn btn-outline" href="https://github.com/Arienee/dengue_brasil/blob/main/notebooks/analise_dengue_(1).ipynb" target="_blank">📓 Ver Notebook</a>
           <a class="btn btn-outline" href="https://github.com/Arienee/dengue_brasil/blob/main/dados/simulacao_dengue_brasil.csv" target="_blank">📥 Baixar Base de Dados</a>
         </div>
       </div>
