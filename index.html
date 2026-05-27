@@ -3,36 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Evolução dos Casos de Dengue no Brasil</title>
+  <title>Dengue Brasil — G2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* Importação de fonte moderna */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-
-    /* Variáveis de cor */
+    /* Variáveis globais de cor e fonte */
     :root {
-      --vermelho:     #c0392b;
-      --vermelho-dk:  #7b0000;
-      --laranja:      #e67e22;
-      --branco:       #ffffff;
-      --cinza-claro:  #f4f6f8;
-      --cinza-medio:  #e2e8f0;
-      --texto:        #1a1a2e;
-      --texto-suave:  #555;
+      --r:    #c0392b;
+      --r2:   #e74c3c;
+      --rdk:  #7b0000;
+      --amb:  #e67e22;
+      --bg:   #0d0d0d;
+      --bg2:  #141414;
+      --bg3:  #1c1c1c;
+      --bdr:  rgba(255,255,255,0.07);
+      --txt:  #f0f0f0;
+      --muted:#888;
+      --code: #1e1e1e;
     }
 
-    /* Reset e base */
+    /* Reset geral */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Inter', Arial, sans-serif;
-      background: var(--cinza-claro);
-      color: var(--texto);
-      position: relative;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--txt);
       overflow-x: hidden;
     }
 
-    /* ── MOSQUITOS ESPALHADOS PELO FUNDO ── */
+    /* ── MOSQUITOS ESPALHADOS NO FUNDO ── */
     .mosquito-bg {
       position: fixed;
       inset: 0;
@@ -41,68 +43,226 @@
       overflow: hidden;
     }
 
-    /* Cada mosquito individual de fundo */
+    /* Cada mosquito posicionado individualmente */
     .mosquito-bg svg {
       position: absolute;
-      opacity: 0.045;
+      opacity: 0.06;
       animation: flutuar var(--dur, 7s) ease-in-out infinite;
       animation-delay: var(--delay, 0s);
     }
 
-    /* Posições e tamanhos de cada mosquito */
-    .mosquito-bg svg:nth-child(1)  { top:  5%; left:  3%;  width: 90px;  --dur: 6s;   --delay: 0s;   }
-    .mosquito-bg svg:nth-child(2)  { top: 12%; left: 80%;  width: 120px; --dur: 8s;   --delay: 1s;   transform: rotate(40deg);  }
-    .mosquito-bg svg:nth-child(3)  { top: 30%; left: 50%;  width: 70px;  --dur: 5.5s; --delay: 2s;   transform: rotate(-20deg); }
-    .mosquito-bg svg:nth-child(4)  { top: 45%; left: 10%;  width: 110px; --dur: 9s;   --delay: 0.5s; transform: rotate(15deg);  }
-    .mosquito-bg svg:nth-child(5)  { top: 60%; left: 70%;  width: 80px;  --dur: 7s;   --delay: 3s;   transform: rotate(-35deg); }
-    .mosquito-bg svg:nth-child(6)  { top: 75%; left: 30%;  width: 100px; --dur: 6.5s; --delay: 1.5s; }
-    .mosquito-bg svg:nth-child(7)  { top: 85%; left: 88%;  width: 65px;  --dur: 8.5s; --delay: 2.5s; transform: rotate(25deg);  }
-    .mosquito-bg svg:nth-child(8)  { top: 92%; left:  5%;  width: 85px;  --dur: 7.5s; --delay: 0.8s; transform: rotate(-10deg); }
+    .mosquito-bg svg:nth-child(1) { top:  3%; left:  2%;  width: 80px;  --dur:6s;   --delay:0s;   }
+    .mosquito-bg svg:nth-child(2) { top:  8%; left: 78%;  width:110px;  --dur:8s;   --delay:1.2s; transform:rotate(40deg);  }
+    .mosquito-bg svg:nth-child(3) { top: 25%; left: 48%;  width: 60px;  --dur:5.5s; --delay:2s;   transform:rotate(-20deg); }
+    .mosquito-bg svg:nth-child(4) { top: 42%; left:  8%;  width:100px;  --dur:9s;   --delay:0.4s; transform:rotate(15deg);  }
+    .mosquito-bg svg:nth-child(5) { top: 55%; left: 65%;  width: 75px;  --dur:7s;   --delay:3s;   transform:rotate(-35deg); }
+    .mosquito-bg svg:nth-child(6) { top: 70%; left: 28%;  width: 95px;  --dur:6.5s; --delay:1.6s; }
+    .mosquito-bg svg:nth-child(7) { top: 82%; left: 85%;  width: 60px;  --dur:8.5s; --delay:2.4s; transform:rotate(25deg);  }
+    .mosquito-bg svg:nth-child(8) { top: 90%; left:  4%;  width: 80px;  --dur:7.5s; --delay:0.8s; transform:rotate(-10deg); }
 
     /* Animação de flutuação suave */
     @keyframes flutuar {
-      0%, 100% { transform: translateY(0px)   rotate(var(--rot, 0deg)); }
-      50%       { transform: translateY(-14px) rotate(var(--rot, 0deg)); }
+      0%,100% { transform: translateY(0);    }
+      50%      { transform: translateY(-14px); }
     }
 
-    /* ── CABEÇALHO ── */
-    header {
+    /* ── BARRA DE NAVEGAÇÃO ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 32px;
+      background: rgba(13,13,13,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--bdr);
+    }
+
+    /* Logo na barra de navegação */
+    .nav-logo {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--r2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Links da barra de navegação */
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--txt); }
+
+    /* ── HERO / CABEÇALHO ── */
+    .hero {
       position: relative;
       z-index: 1;
-      background: linear-gradient(135deg, var(--vermelho-dk) 0%, var(--vermelho) 60%, var(--laranja) 100%);
-      color: white;
-      padding: 60px 20px 50px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
-      padding-bottom: 80px;
+      padding: 120px 20px 80px;
+    }
+
+    /* Círculo brilhante atrás do título */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(192,57,43,0.15) 0%, transparent 65%);
+      pointer-events: none;
+      border-radius: 50%;
     }
 
     /* Etiqueta de disciplina */
-    .header-badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.4);
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      border: 1px solid rgba(192,57,43,0.5);
       border-radius: 999px;
-      padding: 4px 16px;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      margin-bottom: 1.2rem;
+      color: var(--r2);
+      margin-bottom: 2rem;
+      animation: entrar 0.8s ease both;
     }
 
-    header h1 {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 800;
-      line-height: 1.2;
-      margin-bottom: 1rem;
+    /* Título principal com animação */
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      animation: entrar 0.8s 0.1s ease both;
     }
 
-    header p {
+    /* Destaque vermelho no título */
+    .hero h1 span {
+      background: linear-gradient(90deg, var(--r), var(--amb));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Subtítulo do hero */
+    .hero p {
+      max-width: 560px;
       font-size: 1rem;
       font-weight: 300;
-      opacity: 0.9;
-      max-width: 600px;
-      margin: 0 auto;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      animation: entrar 0.8s 0.2s ease both;
+    }
+
+    /* Grupo de botões do hero */
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: entrar 0.8s 0.3s ease both;
+    }
+
+    /* Animação de entrada suave */
+    @keyframes entrar {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0);    }
+    }
+
+    /* ── BOTÕES ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s;
+    }
+
+    /* Botão primário com gradiente */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--r), var(--amb));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(192,57,43,0.4);
+    }
+
+    /* Botão com borda */
+    .btn-outline {
+      border: 1px solid var(--bdr);
+      color: var(--txt);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+    /* ── LINHA DE ESTATÍSTICAS ── */
+    .stats-bar {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0;
+      border-top: 1px solid var(--bdr);
+      border-bottom: 1px solid var(--bdr);
+      background: var(--bg2);
+    }
+
+    /* Cada item de estatística */
+    .stat-item {
+      flex: 1;
+      min-width: 160px;
+      padding: 28px 20px;
+      text-align: center;
+      border-right: 1px solid var(--bdr);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    /* Número da estatística */
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--r2), var(--amb));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Rótulo da estatística */
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
     }
 
     /* ── CONTEÚDO PRINCIPAL ── */
@@ -111,148 +271,239 @@
       z-index: 1;
       max-width: 1000px;
       margin: 0 auto;
-      padding: 50px 20px 60px;
+      padding: 60px 20px 80px;
     }
 
-    /* ── SEÇÕES ── */
-    section {
-      background: var(--branco);
-      margin-bottom: 28px;
-      padding: 32px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
-      border-top: 4px solid transparent;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    /* Cor de destaque ao passar o mouse */
-    section:hover {
-      border-top-color: var(--vermelho);
-      box-shadow: 0 8px 28px rgba(192,57,43,0.12);
-    }
-
-    /* Cabeçalho de cada seção com ícone */
-    .section-header {
+    /* ── TÍTULO DE SEÇÃO ── */
+    .section-label {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 1.2rem;
+      margin-bottom: 32px;
     }
 
-    /* Ícone colorido da seção */
-    .section-icon {
-      width: 38px;
-      height: 38px;
-      background: linear-gradient(135deg, var(--vermelho), var(--laranja));
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
+    /* Linha vermelha decorativa ao lado do título */
+    .section-label::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(to bottom, var(--r), var(--amb));
+      border-radius: 2px;
       flex-shrink: 0;
     }
 
-    h2 {
-      color: var(--vermelho-dk);
-      font-size: 1.25rem;
+    .section-label h2 {
+      font-size: 1.3rem;
       font-weight: 700;
+      color: var(--txt);
     }
 
-    p, li {
-      font-size: 0.95rem;
-      line-height: 1.75;
-      color: var(--texto-suave);
+    /* ── BLOCO DE SEÇÃO ── */
+    .bloco {
+      background: var(--bg2);
+      border: 1px solid var(--bdr);
+      border-radius: 16px;
+      padding: 36px;
+      margin-bottom: 24px;
+      transition: border-color 0.3s;
     }
 
-    ul {
-      padding-left: 1.4rem;
+    .bloco:hover { border-color: rgba(192,57,43,0.35); }
+
+    /* Parágrafo dentro do bloco */
+    .bloco p {
+      font-size: 0.93rem;
+      line-height: 1.85;
+      color: var(--muted);
+      margin-bottom: 12px;
     }
 
-    li { margin-bottom: 6px; }
+    .bloco p:last-child { margin-bottom: 0; }
+
+    /* Lista dentro do bloco */
+    .bloco ul {
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bloco li {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
 
     /* ── GRADE DE CARTÕES ── */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    /* Cartão individual */
+    .card {
+      background: var(--bg3);
+      border: 1px solid var(--bdr);
+      border-radius: 10px;
+      padding: 18px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover { transform: translateY(-3px); border-color: rgba(192,57,43,0.3); }
+
+    /* Título do cartão */
+    .card strong {
+      display: block;
+      color: var(--txt);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    /* ── GRADE DE TECNOLOGIAS ── */
+    .tech-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    /* Pílula de tecnologia */
+    .tech-pill {
+      padding: 7px 16px;
+      background: var(--bg3);
+      border: 1px solid var(--bdr);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      color: var(--txt);
+      font-family: 'JetBrains Mono', monospace;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .tech-pill:hover { border-color: var(--r2); color: var(--r2); }
+
+    /* ── BLOCO DE CÓDIGO ── */
+    .code-block {
+      background: var(--code);
+      border: 1px solid var(--bdr);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #cdd6f4;
+      margin: 16px 0;
+      overflow-x: auto;
+      line-height: 1.9;
+    }
+
+    /* Comentário no bloco de código */
+    .code-block .comment { color: #6c7086; }
+
+    /* Comando no bloco de código */
+    .code-block .cmd { color: #89b4fa; }
+
+    /* Caminho/pasta no bloco de código */
+    .code-block .path { color: #a6e3a1; }
+
+    /* Destaque de texto no código */
+    .code-block .hl { color: #f38ba8; }
+
+    /* ── PASSOS NUMERADOS ── */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
       margin-top: 8px;
     }
 
-    /* Cartão individual da grade */
-    .card {
-      background: #fff8f8;
-      border: 1px solid rgba(192,57,43,0.15);
-      border-left: 4px solid var(--vermelho);
-      padding: 16px;
-      border-radius: 10px;
-      font-size: 0.88rem;
-      color: var(--texto-suave);
-      transition: transform 0.2s;
+    /* Passo individual */
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
     }
 
-    .card:hover { transform: translateY(-3px); }
+    /* Número do passo */
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--r), var(--amb));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
 
-    .card strong {
+    /* Conteúdo do passo */
+    .step-body { flex: 1; }
+
+    .step-body strong {
       display: block;
-      color: var(--texto);
-      margin-bottom: 4px;
-      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--txt);
+      margin-bottom: 6px;
     }
 
-    /* ── BOTÕES ── */
-    .botoes {
+    .step-body p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ── GRUPO DE BOTÕES ── */
+    .btn-group {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 12px;
+      margin-top: 16px;
     }
-
-    /* Botão principal */
-    .button {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 22px;
-      background: linear-gradient(135deg, var(--vermelho), var(--laranja));
-      color: white;
-      text-decoration: none;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: opacity 0.2s, transform 0.2s;
-      box-shadow: 0 4px 14px rgba(192,57,43,0.3);
-    }
-
-    /* Botão secundário */
-    .button.secondary {
-      background: linear-gradient(135deg, var(--vermelho-dk), var(--vermelho));
-      box-shadow: 0 4px 14px rgba(123,0,0,0.25);
-    }
-
-    .button:hover { opacity: 0.88; transform: translateY(-2px); }
 
     /* ── RODAPÉ ── */
     footer {
       position: relative;
       z-index: 1;
       text-align: center;
-      padding: 30px 20px;
-      background: linear-gradient(135deg, var(--vermelho-dk), #2d0000);
-      color: rgba(255,255,255,0.85);
-      font-size: 0.85rem;
-      line-height: 1.8;
+      padding: 36px 20px;
+      border-top: 1px solid var(--bdr);
+      background: var(--bg2);
     }
 
-    footer strong {
-      color: white;
+    /* Integrantes no rodapé */
+    .footer-names {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--txt);
+      margin-bottom: 6px;
+    }
+
+    /* Informação da disciplina */
+    .footer-info {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* Nota de dados simulados */
+    .footer-note {
+      margin-top: 10px;
+      font-size: 0.72rem;
+      color: #444;
+      font-style: italic;
     }
   </style>
 </head>
-
 <body>
 
-  <!-- Mosquitos espalhados pelo fundo da página -->
+  <!-- Mosquitos espalhados pelo fundo -->
   <div class="mosquito-bg" aria-hidden="true">
+    <!-- Repetição do SVG do mosquito em 8 posições diferentes -->
     <!-- Mosquito 1 -->
     <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="50" cy="58" rx="10" ry="20" fill="#c0392b"/>
@@ -351,132 +602,206 @@
     </svg>
   </div>
 
-  <!-- Cabeçalho da página -->
-  <header>
-    <div class="header-badge">🦟 Linguagens de Programação</div>
-    <h1>Evolução dos Casos de Dengue no Brasil</h1>
-    <p>Projeto de análise e visualização de dados com Python, Pandas, SQLAlchemy e Streamlit</p>
-  </header>
+  <!-- Barra de navegação fixa no topo -->
+  <nav>
+    <div class="nav-logo">🦟 Dengue Brasil</div>
+    <ul class="nav-links">
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#indicadores">Indicadores</a></li>
+      <li><a href="#rodar">Como rodar</a></li>
+      <li><a href="#dashboard">Dashboard</a></li>
+    </ul>
+  </nav>
+
+  <!-- Seção hero com título e botões -->
+  <section class="hero">
+    <div class="badge">🎓 Linguagens de Programação · G2</div>
+    <h1>Evolução dos Casos de<br><span>Dengue no Brasil</span></h1>
+    <p>Dashboard interativo de análise epidemiológica com dados de 2015 a 2024 — desenvolvido com Python, Pandas, SQLAlchemy e Streamlit.</p>
+    <div class="hero-btns">
+      <a class="btn btn-primary" href="https://dengue-brasil-awqeamzzyavwxw4pffcfeo.streamlit.app/" target="_blank">🚀 Acessar Dashboard</a>
+      <a class="btn btn-outline" href="https://github.com/Arienee/dengue_brasil" target="_blank">⬡ Ver Repositório</a>
+    </div>
+  </section>
+
+  <!-- Linha de estatísticas do projeto -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">2015–2024</div>
+      <div class="stat-label">Período analisado</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">27</div>
+      <div class="stat-label">Estados cobertos</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">6</div>
+      <div class="stat-label">Perguntas de negócio</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Código aberto</div>
+    </div>
+  </div>
 
   <main>
 
     <!-- Seção: Sobre o projeto -->
-    <section>
-      <div class="section-header">
-        <div class="section-icon">📋</div>
-        <h2>Sobre o projeto</h2>
+    <div id="sobre">
+      <div class="section-label"><h2>Sobre o projeto</h2></div>
+      <div class="bloco">
+        <p>Este projeto apresenta uma análise da evolução dos casos de dengue no Brasil ao longo dos anos, considerando distribuição por região, sazonalidade, tendências e perfil das populações afetadas.</p>
+        <p>A proposta é demonstrar um fluxo completo de projeto analítico: preparação dos dados, análise exploratória, criação de indicadores, visualizações, dashboard interativo e publicação em ambiente web.</p>
       </div>
-      <p>
-        Este projeto apresenta uma análise da evolução dos casos de dengue no Brasil ao longo dos anos,
-        considerando distribuição por região, sazonalidade, tendências e perfil das populações afetadas.
-      </p>
-      <br>
-      <p>
-        A proposta é demonstrar um fluxo completo de projeto analítico: preparação dos dados,
-        análise exploratória, criação de indicadores, visualizações, dashboard interativo e publicação
-        em ambiente web.
-      </p>
-    </section>
+    </div>
 
     <!-- Seção: Perguntas de negócio -->
-    <section>
-      <div class="section-header">
-        <div class="section-icon">❓</div>
-        <h2>Perguntas de negócio</h2>
+    <div style="margin-top:40px">
+      <div class="section-label"><h2>Perguntas de negócio</h2></div>
+      <div class="bloco">
+        <ul>
+          <li>Qual é a evolução dos casos de dengue ao longo dos anos no Brasil?</li>
+          <li>Quais estados concentram o maior número de casos?</li>
+          <li>Existe sazonalidade nos registros de dengue?</li>
+          <li>Quais regiões apresentam maior taxa de incidência?</li>
+          <li>Como se comportam os casos em relação à população de cada estado?</li>
+          <li>Há tendência de crescimento ou redução nos casos recentes?</li>
+        </ul>
       </div>
-      <ul>
-        <li>Qual é a evolução dos casos de dengue ao longo dos anos no Brasil?</li>
-        <li>Quais estados concentram o maior número de casos?</li>
-        <li>Existe sazonalidade nos registros de dengue?</li>
-        <li>Quais regiões apresentam maior taxa de incidência?</li>
-        <li>Como se comportam os casos em relação à população de cada estado?</li>
-        <li>Há tendência de crescimento ou redução nos casos recentes?</li>
-      </ul>
-    </section>
+    </div>
 
     <!-- Seção: Indicadores analisados -->
-    <section>
-      <div class="section-header">
-        <div class="section-icon">📊</div>
-        <h2>Indicadores analisados</h2>
+    <div id="indicadores" style="margin-top:40px">
+      <div class="section-label"><h2>Indicadores analisados</h2></div>
+      <div class="bloco">
+        <div class="grid">
+          <div class="card"><strong>Total de Casos</strong>Número absoluto de registros de dengue por período.</div>
+          <div class="card"><strong>Taxa de Incidência</strong>Casos por 100 mil habitantes em cada estado.</div>
+          <div class="card"><strong>Distribuição Regional</strong>Concentração de casos por região do Brasil.</div>
+          <div class="card"><strong>Evolução Temporal</strong>Variação dos casos semana a semana e ano a ano.</div>
+        </div>
       </div>
-      <div class="grid">
-        <div class="card"><strong>Total de Casos</strong>Número absoluto de registros de dengue por período.</div>
-        <div class="card"><strong>Taxa de Incidência</strong>Casos por 100 mil habitantes em cada estado.</div>
-        <div class="card"><strong>Distribuição Regional</strong>Concentração de casos por região do Brasil.</div>
-        <div class="card"><strong>Evolução Temporal</strong>Variação dos casos semana a semana e ano a ano.</div>
-      </div>
-    </section>
+    </div>
 
     <!-- Seção: Tecnologias utilizadas -->
-    <section>
-      <div class="section-header">
-        <div class="section-icon">🛠️</div>
-        <h2>Tecnologias utilizadas</h2>
+    <div style="margin-top:40px">
+      <div class="section-label"><h2>Tecnologias utilizadas</h2></div>
+      <div class="bloco">
+        <div class="tech-grid">
+          <span class="tech-pill">Python</span>
+          <span class="tech-pill">Pandas</span>
+          <span class="tech-pill">Plotly</span>
+          <span class="tech-pill">Matplotlib</span>
+          <span class="tech-pill">Seaborn</span>
+          <span class="tech-pill">Streamlit</span>
+          <span class="tech-pill">SQLAlchemy</span>
+          <span class="tech-pill">SQLite</span>
+          <span class="tech-pill">NumPy</span>
+          <span class="tech-pill">GitHub Pages</span>
+        </div>
       </div>
-      <div class="grid">
-        <div class="card">Python</div>
-        <div class="card">Pandas</div>
-        <div class="card">Matplotlib</div>
-        <div class="card">Seaborn</div>
-        <div class="card">Streamlit</div>
-        <div class="card">SQLAlchemy</div>
-        <div class="card">SQLite</div>
-        <div class="card">GitHub Pages</div>
+    </div>
+
+    <!-- Seção: Estrutura do projeto -->
+    <div style="margin-top:40px">
+      <div class="section-label"><h2>Estrutura do projeto</h2></div>
+      <div class="bloco">
+        <div class="code-block">
+<span class="path">dengue-brasil/</span>
+├── <span class="hl">app.py</span>                          <span class="comment">← Dashboard (Streamlit)</span>
+├── <span class="cmd">requirements.txt</span>                <span class="comment">← Lista de bibliotecas</span>
+├── <span class="cmd">README.md</span>
+├── <span class="path">dados/</span>
+│   └── <span class="hl">simulacao_dengue_brasil.csv</span> <span class="comment">← Base de dados</span>
+├── <span class="path">database/</span>
+│   └── <span class="cmd">dengue.sqlite</span>               <span class="comment">← Criado automaticamente</span>
+├── <span class="path">notebooks/</span>
+│   └── <span class="hl">analise_dengue.ipynb</span>        <span class="comment">← Notebook (Google Colab)</span>
+└── <span class="path">.streamlit/</span>
+    └── <span class="cmd">config.toml</span>                 <span class="comment">← Tema visual</span>
+        </div>
       </div>
-    </section>
+    </div>
+
+    <!-- Seção: Como rodar localmente -->
+    <div id="rodar" style="margin-top:40px">
+      <div class="section-label"><h2>Como rodar localmente (Windows)</h2></div>
+      <div class="bloco">
+        <div class="steps">
+          <!-- Passo 1 -->
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <strong>Instalar as dependências</strong>
+              <p>Abra o Prompt de Comando e cole o comando abaixo:</p>
+              <div class="code-block"><span class="cmd">pip install</span> streamlit pandas numpy plotly sqlalchemy statsmodels</div>
+            </div>
+          </div>
+          <!-- Passo 2 -->
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>Entrar na pasta do projeto</strong>
+              <div class="code-block"><span class="cmd">cd</span> <span class="path">C:\caminho\para\dengue-brasil</span></div>
+            </div>
+          </div>
+          <!-- Passo 3 -->
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong>Rodar o dashboard</strong>
+              <div class="code-block"><span class="cmd">streamlit run</span> <span class="hl">app.py</span></div>
+              <p>O navegador abrirá automaticamente em <code style="color:#a6e3a1">http://localhost:8501</code></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção: Como usar o notebook no Colab -->
+    <div style="margin-top:40px">
+      <div class="section-label"><h2>Como usar o notebook no Google Colab</h2></div>
+      <div class="bloco">
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><p>Acesse <a href="https://colab.research.google.com" target="_blank" style="color:var(--r2)">colab.research.google.com</a></p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><p>Clique em <strong style="color:var(--txt)">Arquivo → Fazer upload de notebook</strong></p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><p>Selecione o arquivo <code style="color:#a6e3a1">notebooks/analise_dengue.ipynb</code></p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><p>Execute a primeira célula — ela pedirá para fazer upload do CSV (<code style="color:#a6e3a1">dados/simulacao_dengue_brasil.csv</code>)</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><p>Execute todas as células com <strong style="color:var(--txt)">Ctrl + F9</strong></p></div></div>
+        </div>
+      </div>
+    </div>
 
     <!-- Seção: Arquivos do projeto -->
-    <section>
-      <div class="section-header">
-        <div class="section-icon">📁</div>
-        <h2>Arquivos do projeto</h2>
+    <div style="margin-top:40px">
+      <div class="section-label"><h2>Arquivos do projeto</h2></div>
+      <div class="bloco">
+        <p>Acesse os principais componentes diretamente pelo GitHub:</p>
+        <div class="btn-group">
+          <a class="btn btn-primary" href="https://github.com/Arienee/dengue_brasil/blob/main/notebooks/analise_dengue_(1).ipynb" target="_blank">📓 Ver Notebook</a>
+          <a class="btn btn-outline" href="https://github.com/Arienee/dengue_brasil/blob/main/dados/simulacao_dengue_brasil.csv" target="_blank">📥 Baixar Base de Dados</a>
+        </div>
       </div>
-      <p>Acesse os principais componentes do projeto:</p>
-      <div class="botoes">
-        <a class="button" href="https://github.com/Arienee/dengue_brasil/blob/main/notebooks/analise_dengue_(1).ipynb" target="_blank">📓 Ver Notebook</a>
-        <a class="button secondary" href="https://github.com/Arienee/dengue_brasil/blob/main/dados/simulacao_dengue_brasil.csv" target="_blank">📥 Baixar Base de Dados</a>
-      </div>
-    </section>
+    </div>
 
     <!-- Seção: Dashboard interativo -->
-    <section>
-      <div class="section-header">
-        <div class="section-icon">🖥️</div>
-        <h2>Dashboard interativo</h2>
+    <div id="dashboard" style="margin-top:40px">
+      <div class="section-label"><h2>Dashboard interativo</h2></div>
+      <div class="bloco">
+        <p>O dashboard foi desenvolvido com Streamlit e permite explorar os dados por meio de filtros, KPIs, gráficos e mapas interativos.</p>
+        <div class="btn-group">
+          <a class="btn btn-primary" href="https://dengue-brasil-awqeamzzyavwxw4pffcfeo.streamlit.app/" target="_blank">🚀 Acessar Dashboard Streamlit</a>
+        </div>
       </div>
-      <p>
-        O dashboard principal foi desenvolvido com Streamlit e permite explorar os dados por meio
-        de filtros, KPIs, gráficos e mapas interativos.
-      </p>
-      <div class="botoes">
-        <a class="button" href="https://dengue-brasil-awqeamzzyavwxw4pffcfeo.streamlit.app/" target="_blank">🚀 Acessar Dashboard Streamlit</a>
-      </div>
-    </section>
-
-    <!-- Seção: Objetivo pedagógico -->
-    <section>
-      <div class="section-header">
-        <div class="section-icon">🎓</div>
-        <h2>Objetivo pedagógico</h2>
-      </div>
-      <p>
-        Este projeto serve como referência para a avaliação da disciplina de Linguagens de Programação,
-        mostrando como transformar uma base de dados em um produto analítico completo, organizado e publicável.
-      </p>
-      <br>
-      <p>
-        Mais importante do que criar gráficos é responder perguntas relevantes e apoiar a compreensão
-        de um problema de saúde pública de grande impacto no Brasil.
-      </p>
-    </section>
+    </div>
 
   </main>
 
   <!-- Rodapé com integrantes e disciplina -->
   <footer>
-    <p>Projeto desenvolvido para fins educacionais — <strong>Linguagens de Programação</strong></p>
-    <p><strong>Ariene Viana Marina</strong> &nbsp;|&nbsp; <strong>João Marcelo Lopes Alves</strong></p>
+    <div class="footer-names">Ariene Viana Marina &nbsp;·&nbsp; João Marcelo Lopes Alves</div>
+    <div class="footer-info">Linguagens de Programação — Projeto de Análise e Visualização de Dados</div>
+    <div class="footer-note">* Dados simulados para fins didáticos.</div>
   </footer>
 
 </body>
