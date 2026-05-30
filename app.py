@@ -28,7 +28,7 @@ st.markdown("""
   }
   .kpi-label { color: #a0aec0; font-size: 0.78rem;
                text-transform: uppercase; letter-spacing: .06em; }
-  .kpi-value { color: #f7fafc; font-size: 1.8rem; font-weight: 800; }
+  .kpi-value { color: #f7fafc; font-size: 18px; font-weight: 800; }
   .kpi-sub   { color: #68d391; font-size: 0.75rem; margin-top: 2px; }
   .sec { font-size: 1.1rem; font-weight: 700; color: #e94560;
          border-bottom: 2px solid #e94560;
